@@ -15,6 +15,7 @@ body{
 .greetings{
     font-size: 6rem;
     font-weight: 900;
+    text-align: center;
 }
 .greetings > span{
     animation: glow 2.5s ease-in-out infinite;
@@ -39,30 +40,28 @@ body{
     animation-delay: .6s;
 }
 .greetings > span:nth-child(5){
-    animation-delay: .6s;
+    animation-delay: .8s;
 }
 .greetings > span:nth-child(6){
-    animation-delay: .6s;
+    animation-delay: 1s;
 }
 .greetings > span:nth-child(7){
-    animation-delay: .6s;
+    animation-delay: 1.2s;
 }
 .greetings > span:nth-child(8){
-    animation-delay: .6s;
+    animation-delay: 1.4s;
 }
 .greetings > span:nth-child(9){
-    animation-delay: .6s;
+    animation-delay: 1.6s;
 }
 .greetings > span:nth-child(10){
-    animation-delay: .6s;
+    animation-delay: 1.8s;
 }
-/* .greetings > span:nth-child(5){
-    animation-delay: .8s;
-} */
 
 .description{
     font-size: 1.5rem;
     margin-bottom: 20px;
+    text-align: center;
 }
 
 .button a{
@@ -71,17 +70,14 @@ body{
     color: #111;
 }
 
-@media screen and (max-width:574px){
+@media screen and (max-width: 574px){
     .greetings{
-        display: block;
         font-size: 3rem;
         font-weight: 500;
-        text-align: center;
     }
     .description{
         font-size: 1rem;
     }
-    
     .button a{
         font-size: .5rem;
     }
