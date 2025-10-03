@@ -1,0 +1,91 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap");
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+body {
+  background: #111;
+  color: #fff;
+  line-height: 1.6;
+}
+
+header {
+  text-align: center;
+  padding: 20px;
+  background: #222;
+}
+
+header h1 {
+  margin-bottom: 10px;
+  font-size: 2rem;
+  color: #ff80ab;
+}
+
+nav a {
+  color: #fff;
+  margin: 0 10px;
+  text-decoration: none;
+}
+
+nav a.active {
+  font-weight: bold;
+  color: #39c6d6;
+}
+
+.album {
+  max-width: 900px;
+  margin: 20px auto;
+  padding: 20px;
+}
+
+.memory {
+  margin-bottom: 40px;
+  text-align: center;
+  animation: fadeInUp 1s ease forwards;
+}
+
+.memory h2 {
+  margin-bottom: 10px;
+  color: #ffd166;
+}
+
+.memory img {
+  max-width: 100%;
+  border-radius: 12px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+  margin-bottom: 10px;
+}
+
+.memory p {
+  font-size: 1rem;
+  color: #ddd;
+}
+.memory video {
+  max-width: 100%;
+  border-radius: 12px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+  margin-bottom: 10px;
+}
+
+footer {
+  text-align: center;
+  padding: 20px;
+  background: #222;
+  font-size: 0.9rem;
+  color: #aaa;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
