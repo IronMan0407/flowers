@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add New Post</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Add a New Post</h1>
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="album.html">Album</a>
+        <a href="posts.html">Posts</a>
+      </nav>
+    </header>
+
+    <main>
+      <form id="post-form">
+        <label for="post-text">Post Text:</label>
+        <textarea id="post-text" name="text" placeholder="Write something..." required></textarea>
+
+        <label for="post-image">Upload Image (optional):</label>
+        <input type="file" id="post-image" name="image" accept="image/*" />
+
+        <button type="submit">Submit</button>
+      </form>
+    </main>
+
+    <script>
+      document.getElementById('post-form').addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const formData = new FormData();
+        const text = document.getElementById('post-text').value;
+        const image = document.getElementById('post-image').files[0];
+
+        formData.append('text', text);
+        if (image) {
+          formData.append('image', image);
+        }
+
+        const response = await fetch('https://your-backend-url.onrender.com/api/posts', {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (response.ok) {
+          alert('Post added successfully!');
+          window.location.href = 'posts.html';
+        } else {
+          alert('Failed to add post.');
+        }
+      });
+    </script>
+  </body>
+</html>
