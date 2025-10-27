@@ -447,7 +447,7 @@
 
     <script>
       async function fetchComments(imageId) {
-        const response = await fetch('https://your-backend-url.onrender.com/api/comments/' + imageId);
+        const response = await fetch('https://flowers-backend.onrender.com/api/comments/' + imageId);
         const comments = await response.json();
         return comments;
       }
@@ -458,7 +458,7 @@
         const comment = input.value;
         if (!comment) return;
 
-        const response = await fetch('https://your-backend-url.onrender.com/api/comments/' + imageId, {
+        const response = await fetch('https://flowers-backend.onrender.com/api/comments/' + imageId, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
