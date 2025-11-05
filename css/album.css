@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap");
 
 * {
   margin: 0;
@@ -7,16 +7,10 @@
   font-family: "Poppins", sans-serif;
 }
 
-html, body {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
 body {
   background: #111;
   color: #fff;
-  flex: 1;
+  line-height: 1.6;
 }
 
 header {
@@ -42,84 +36,42 @@ nav a.active {
   color: #39c6d6;
 }
 
-main {
-  flex: 1;
+.album {
   max-width: 900px;
   margin: 20px auto;
-  width: 90%;
+  padding: 20px;
 }
 
-.upload-section {
-  text-align: center;
+.memory {
   margin-bottom: 40px;
-}
-
-#photoInput, #commentInput {
-  display: block;
-  width: 80%;
-  max-width: 400px;
-  margin: 10px auto;
-  padding: 10px;
-  border-radius: 8px;
-  border: none;
-  background: #222;
-  color: #fff;
-  font-size: 1rem;
-}
-
-.button-container {
-  display: flex;
-  justify-content: center;
-  margin-top: 10px;
-}
-
-.button-container button {
-  background: #39c6d6;
-  border: none;
-  border-radius: 8px;
-  padding: 10px 20px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: 0.3s ease;
-}
-
-.button-container button a {
-  color: #111;
-  text-decoration: none;
-}
-
-.button-container button:hover {
-  background: #ff80ab;
-  color: #fff;
-}
-
-#gallery {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 20px;
-}
-
-#gallery div {
   text-align: center;
-  max-width: 200px;
-  flex: 1 1 200px;
   animation: fadeInUp 1s ease forwards;
 }
 
-#gallery img, #gallery video {
-  width: 100%;
-  border-radius: 10px;
+.memory h2 {
+  margin-bottom: 10px;
+  color: #ffd166;
+}
+
+.memory img {
+  max-width: 100%;
+  border-radius: 12px;
   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
   margin-bottom: 10px;
 }
 
-#gallery video {
-  max-height: 200px;
+.memory p {
+  font-size: 1rem;
+  color: #ddd;
+}
+.memory video {
+  max-width: 100%;
+  border-radius: 12px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+  margin-bottom: 10px;
 }
 
 footer {
-  margin-top: auto;
   text-align: center;
   padding: 20px;
   background: #222;
@@ -135,19 +87,5 @@ footer {
   to {
     opacity: 1;
     transform: translateY(0);
-  }
-}
-
-/* Mobile responsiveness */
-@media screen and (max-width: 574px) {
-  header h1 {
-    font-size: 1.5rem;
-  }
-  #photoInput, #commentInput {
-    width: 95%;
-  }
-  #gallery div {
-    max-width: 150px;
-    flex: 1 1 150px;
   }
 }
