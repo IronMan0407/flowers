@@ -18,10 +18,15 @@
     </header>
   
     <main>
-      <input type="file" id="photoInput" accept="image/*" />
-      <input type="text" id="commentInput" placeholder="Сэтгэгдэл бичих" />
-      <button id="uploadBtn">Оруулах</button>
-      <div id="gallery"></div>
+      <section class="upload-section">
+        <input type="file" id="photoInput" accept="image/*,video/*" />
+        <input type="text" id="commentInput" placeholder="Сэтгэгдэлээ бичнэ үү..." />
+        <div class="button-container">
+          <button id="uploadBtn"><a href="#">Оруулах</a></button>
+        </div>
+      </section>
+  
+      <section id="gallery" class="gallery"></section>
     </main>
   
     <footer>
