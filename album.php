@@ -88,7 +88,7 @@ $conn->close();
             <button class="delete-btn" data-id="<?php echo $memory['id']; ?>" title="Устгах">
               🗑️
             </button>
-            <h3>Шинэ зураг 🎉</h3>
+            <h3>Шинээр оруулсан зураг 🎉</h3>
             <img src="<?php echo htmlspecialchars($memory['url']); ?>" alt="Uploaded memory" />
             <?php if (!empty($memory['comment'])): ?>
               <p><?php echo htmlspecialchars_decode($memory['comment'], ENT_QUOTES); ?></p>
