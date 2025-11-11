@@ -118,7 +118,7 @@ $conn->close();
     </main>
 
     <footer>
-      <p>Зөвхөн бидэнд зориулсан ❤️</p>
+      <p>Зөвхөн Оюундарь-т ❤️</p>
     </footer>
 
     <script src="js/thoughts.js"></script>
