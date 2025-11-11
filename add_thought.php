@@ -1,33 +1,17 @@
 <?php
-// Enable error reporting for debugging
+require_once 'config.php';
+
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 header('Content-Type: application/json');
 
-// Database connection
-$host = '127.0.0.1';
-$username = 'root';
-$password = 'Yaphets123';
-$database = 'flowers';
-
-$conn = new mysqli($host, $username, $password, $database);
-if ($conn->connect_error) {
-    echo json_encode(['error' => 'Database connection failed: ' . $conn->connect_error]);
-    exit;
-}
-
-// Set charset
-$conn->set_charset("utf8mb4");
+$conn = getDbConnection();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Log received data for debugging
-    error_log("Received POST data: " . print_r($_POST, true));
-    
     $author = isset($_POST['author']) ? trim($_POST['author']) : '';
     $content = isset($_POST['content']) ? trim($_POST['content']) : '';
     
-    // Validation
     if (empty($author)) {
         echo json_encode(['error' => 'Хэн бичиж байгааг сонгоно уу']);
         exit;
