@@ -1,7 +1,9 @@
 <?php
+require_once 'config.php';
+
 header('Content-Type: application/json');
 
-$conn = new mysqli('127.0.0.1', 'root', 'Yaphets123', 'flowers');
+$conn = getDbConnection();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $id = intval($_POST['id']);
