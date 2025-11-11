@@ -28,7 +28,12 @@ body {
   width: 100%;
   height: 100%;
   filter: blur(0.1vmin);
-  background-image: radial-gradient(ellipse at top, transparent 0%, var(--dark-color)), radial-gradient(ellipse at bottom, var(--dark-color), rgba(145, 233, 255, 0.2)), repeating-linear-gradient(220deg, rgb(0, 0, 0) 0px, rgb(0, 0, 0) 19px, transparent 19px, transparent 22px), repeating-linear-gradient(189deg, rgb(0, 0, 0) 0px, rgb(0, 0, 0) 19px, transparent 19px, transparent 22px), repeating-linear-gradient(148deg, rgb(0, 0, 0) 0px, rgb(0, 0, 0) 19px, transparent 19px, transparent 22px), linear-gradient(90deg, rgb(0, 255, 250), rgb(240, 240, 240));
+  background-image: radial-gradient(ellipse at top, transparent 0%, var(--dark-color)), 
+    radial-gradient(ellipse at bottom, var(--dark-color), rgba(145, 233, 255, 0.2)), 
+    repeating-linear-gradient(220deg, rgb(0, 0, 0) 0px, rgb(0, 0, 0) 19px, transparent 19px, transparent 22px), 
+    repeating-linear-gradient(189deg, rgb(0, 0, 0) 0px, rgb(0, 0, 0) 19px, transparent 19px, transparent 22px), 
+    repeating-linear-gradient(148deg, rgb(0, 0, 0) 0px, rgb(0, 0, 0) 19px, transparent 19px, transparent 22px), 
+    linear-gradient(90deg, rgb(0, 255, 250), rgb(240, 240, 240));
 }
 
 .flowers {
@@ -1315,32 +1320,217 @@ body {
     transform: scale(0);
   }
 }
+/* ============================================
+   RESPONSIVE DESIGN FOR MOBILE
+   ============================================ */
+
+/* Navigation Improvements */
 .flower-nav {
-  position: absolute;
+  position: fixed;
   top: 0;
-  width: 100%;
-  text-align: center;
-  padding: 15px;
+  left: 0;
+  right: 0;
   z-index: 1000;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(26, 26, 46, 0.95);
+  backdrop-filter: blur(10px);
+  padding: 10px 0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
-.flower-nav a {
+.flower-nav nav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  flex-wrap: wrap;
+  padding: 0 10px;
+}
+
+.flower-nav nav a {
   color: #fff;
-  margin: 0 15px;
   text-decoration: none;
-  font-size: 1.1rem;
-  padding: 5px 10px;
-  border-radius: 5px;
-  transition: color 0.3s;
+  padding: 8px 16px;
+  border-radius: 20px;
+  transition: all 0.3s ease;
+  font-size: 14px;
+  white-space: nowrap;
 }
 
-.flower-nav a:hover,
-.flower-nav a.active {
+.flower-nav nav a:hover {
+  background: rgba(57, 198, 214, 0.2);
   color: #39c6d6;
+}
+
+.flower-nav nav a.active {
+  background: #39c6d6;
+  color: #111;
   font-weight: bold;
 }
-.container * {
-  -webkit-animation-play-state: paused !important;
-          animation-play-state: paused !important;
-}/*# sourceMappingURL=main.css.map */
+
+/* Container adjustments */
+.container {
+  padding-top: 60px; /* Space for fixed nav */
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Tablet Devices (768px and below) */
+@media (max-width: 768px) {
+  .flower-nav nav {
+    gap: 10px;
+  }
+  
+  .flower-nav nav a {
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+  
+  /* Scale down flowers for tablet */
+  .flowers {
+    transform: scale(0.8);
+    transform-origin: center bottom;
+  }
+  
+  /* Adjust night sky */
+  .night {
+    height: 100vh;
+  }
+}
+
+/* Mobile Devices (480px and below) */
+@media (max-width: 480px) {
+  /* Navigation for small screens */
+  .flower-nav {
+    padding: 8px 0;
+  }
+  
+  .flower-nav nav {
+    gap: 8px;
+    padding: 0 5px;
+  }
+  
+  .flower-nav nav a {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+  
+  /* Scale down flowers significantly */
+  .flowers {
+    transform: scale(0.6);
+    transform-origin: center bottom;
+  }
+  
+  /* Adjust flower positions for mobile */
+  .flower--1 {
+    left: 20% !important;
+  }
+  
+  .flower--2 {
+    left: 50% !important;
+  }
+  
+  .flower--3 {
+    left: 80% !important;
+  }
+  
+  /* Reduce animation complexity on mobile for better performance */
+  .flower__light {
+    animation-duration: 3s !important;
+  }
+  
+  /* Optimize grass rendering */
+  .flower__grass__leaf {
+    opacity: 0.8;
+  }
+}
+
+/* Very Small Devices (360px and below) */
+@media (max-width: 360px) {
+  .flower-nav nav {
+    gap: 5px;
+  }
+  
+  .flower-nav nav a {
+    padding: 5px 8px;
+    font-size: 11px;
+  }
+  
+  /* Further scale down */
+  .flowers {
+    transform: scale(0.5);
+    transform-origin: center bottom;
+  }
+  
+  /* Stack navigation if needed */
+  .flower-nav nav {
+    flex-direction: row;
+    justify-content: space-around;
+  }
+}
+
+/* Landscape Mode on Mobile */
+@media (max-width: 768px) and (orientation: landscape) {
+  .flowers {
+    transform: scale(0.7);
+    transform-origin: center center;
+  }
+  
+  .container {
+    padding-top: 50px;
+  }
+  
+  .flower-nav {
+    padding: 5px 0;
+  }
+  
+  .flower-nav nav a {
+    padding: 5px 10px;
+    font-size: 12px;
+  }
+}
+
+/* Touch Device Optimizations */
+@media (hover: none) and (pointer: coarse) {
+  /* Larger touch targets */
+  .flower-nav nav a {
+    min-width: 60px;
+    min-height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  /* Disable hover effects on touch devices */
+  .flower-nav nav a:hover {
+    background: none;
+  }
+  
+  .flower-nav nav a:active {
+    background: rgba(57, 198, 214, 0.3);
+    transform: scale(0.95);
+  }
+}
+
+/* High DPI Displays (Retina) */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .flower__leaf,
+  .flower__grass__leaf {
+    image-rendering: -webkit-optimize-contrast;
+  }
+}
+
+/* Dark Mode Support (if phone is in dark mode) */
+@media (prefers-color-scheme: dark) {
+  .night {
+    background: linear-gradient(to bottom, #0a0a0a 0%, #1a1a2e 100%);
+  }
+}
+
+/* Reduce Motion for Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

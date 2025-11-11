@@ -1,0 +1,29 @@
+/* css/mobile.css - Mobile-specific styles */
+
+/* Only load on mobile devices */
+@media (max-width: 768px) {
+    body {
+      -webkit-tap-highlight-color: transparent;
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+    
+    /* Prevent zoom on input focus */
+    input, select, textarea {
+      font-size: 16px !important;
+    }
+    
+    /* Smooth scrolling */
+    html {
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
+    }
+    
+    /* Optimize rendering */
+    .flowers * {
+      backface-visibility: hidden;
+      perspective: 1000px;
+    }
+  }
+  
