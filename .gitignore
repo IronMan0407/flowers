@@ -1,0 +1,17 @@
+# Local development
+uploads/*
+!uploads/.gitkeep
+
+# Environment variables
+.env
+.env.local
+
+# macOS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log

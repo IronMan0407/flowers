@@ -1,16 +1,29 @@
 <?php
-// Database connection
-$host = '127.0.0.1';
-$username = 'root';
-$password = 'Yaphets123';
-$database = 'flowers';
+require_once 'config.php';
+$conn = getDbConnection();
 
-$conn = new mysqli($host, $username, $password, $database);
-if ($conn->connect_error) {
-  die("Connection failed: " . $conn->connect_error);
+function safeDisplay($text) {
+  if (empty($text)) return '';
+  
+  $text = htmlspecialchars($text, ENT_QUOTES, 'UTF-8');
+  
+  $safe_replacements = [
+    '<3' => '<3',
+    '</3' => '</3',
+    '>' => '>',
+    '&amp;' => '&',
+    '&quot;' => '"',
+    '&#039;' => "'"
+  ];
+  
+  foreach ($safe_replacements as $encoded => $decoded) {
+    $text = str_replace($encoded, $decoded, $text);
+  }
+  
+  $text = nl2br($text);
+  return $text;
 }
 
-// Only select images with status = 1 (active)
 $query = 'SELECT id, url, comment, timestamp FROM oyu_memories WHERE status = 1 ORDER BY timestamp DESC';
 $result = $conn->query($query);
 $uploadedMemories = [];

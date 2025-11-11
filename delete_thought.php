@@ -1,17 +1,9 @@
 <?php
+require_once 'config.php';
+
 header('Content-Type: application/json');
 
-// Database connection
-$host = '127.0.0.1';
-$username = 'root';
-$password = 'Yaphets123';
-$database = 'flowers';
-
-$conn = new mysqli($host, $username, $password, $database);
-if ($conn->connect_error) {
-    echo json_encode(['error' => 'Database connection failed']);
-    exit;
-}
+$conn = getDbConnection();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $id = isset($_POST['id']) ? intval($_POST['id']) : 0;
@@ -21,7 +13,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    // Soft delete: Update status to 0
     $stmt = $conn->prepare('UPDATE thoughts SET status = 0 WHERE id = ?');
     $stmt->bind_param('i', $id);
 

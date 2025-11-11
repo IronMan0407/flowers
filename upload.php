@@ -1,17 +1,9 @@
 <?php
+require_once 'config.php';
+
 header('Content-Type: application/json');
 
-// Database connection
-$host = '127.0.0.1';
-$username = 'root';
-$password = 'Yaphets123';
-$database = 'flowers';
-
-$conn = new mysqli($host, $username, $password, $database);
-if ($conn->connect_error) {
-    echo json_encode(['error' => 'Database connection failed: ' . $conn->connect_error]);
-    exit;
-}
+$conn = getDbConnection();
 
 // Handle file upload
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -53,12 +45,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    // Insert into database (store raw comment, escape on display)
-    $stmt = $conn->prepare('INSERT INTO oyu_memories (url, comment, timestamp) VALUES (?, ?, NOW())');
+    // Insert into database
+    $stmt = $conn->prepare('INSERT INTO oyu_memories (url, comment, timestamp, status) VALUES (?, ?, NOW(), 1)');
     $stmt->bind_param('ss', $filePath, $comment);
 
     if (!$stmt->execute()) {
-        // Delete uploaded file if database insert fails
         unlink($filePath);
         echo json_encode(['error' => 'Database insert failed: ' . $stmt->error]);
         exit;
