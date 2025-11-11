@@ -41,26 +41,26 @@ $conn->close();
   </head>
   <body>
     <header>
-      <h1>Бидний бодол санаа 💭</h1>
+      <h1>Чиний хувийн блог 💭</h1>
       <nav>
         <a href="index.html">Нүүр</a>
         <a href="flower.html">Flowers</a>
         <a href="album.php">Албум</a>
-        <a href="thoughts.php" class="active">Бодол санаа</a>
+        <a href="thoughts.php" class="active">Note</a>
       </nav>
     </header>
 
     <main class="thoughts-container">
       <!-- Add Thought Form -->
       <section class="add-thought-section">
-        <h2>Бодол санаагаа бичих ✍️</h2>
+        <h2>Блог бичих ✍️</h2>
         <form id="thoughtForm">
           <div class="form-group">
             <label for="authorInput">Хэн бичиж байна:</label>
             <select id="authorInput" name="author" required>
               <option value="">Сонгох...</option>
               <option value="IronMan">IronMan</option>
-              <option value="Оюундарь">Хөөрхөн Оюундарь</option>
+              <option value="Оюундарь">Оюу</option>
             </select>
           </div>
 
