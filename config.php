@@ -1,27 +1,21 @@
 <?php
-// config.php - Database configuration for Railway deployment
 
 function getDbConnection() {
-    // Check if MYSQL_URL is available (Railway format)
     $mysqlUrl = getenv('MYSQL_URL');
     
     if ($mysqlUrl) {
-        // Parse Railway's MYSQL_URL format:
-        // mysql://root:password@mysql.railway.internal:3306/railway
         $url = parse_url($mysqlUrl);
-        
         $host = $url['host'];
         $username = $url['user'];
         $password = $url['pass'];
         $database = ltrim($url['path'], '/');
         $port = $url['port'] ?? 3306;
     } else {
-        // Local development fallback
-        $host = '127.0.0.1';
-        $username = 'root';
-        $password = 'Yaphets123';
-        $database = 'flowers';
-        $port = 3306;
+        $host = getenv('MYSQLHOST') ?: '127.0.0.1';
+        $username = getenv('MYSQLUSER') ?: 'root';
+        $password = getenv('MYSQLPASSWORD') ?: 'Yaphets123';
+        $database = getenv('MYSQL_DATABASE') ?: 'flowers';
+        $port = getenv('MYSQLPORT') ?: 3306;
     }
     
     $conn = new mysqli($host, $username, $password, $database, $port);
