@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Admin - All Memories</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+
+        .header {
+            background: #333;
+            color: white;
+            padding: 20px;
+            margin: -20px -20px 20px -20px;
+        }
+
+        .header h1 {
+            margin: 0;
+        }
+
+        .header a {
+            color: #4CAF50;
+            text-decoration: none;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        th,
+        td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background: #333;
+            color: white;
+        }
+
+        .active {
+            color: green;
+            font-weight: bold;
+        }
+
+        .deleted {
+            color: red;
+            font-weight: bold;
+        }
+
+        img {
+            max-width: 100px;
+            height: auto;
+            border-radius: 5px;
+        }
+
+        .restore-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        .restore-btn:hover {
+            background: #45a049;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <h1>Admin Panel - All Memories</h1>
+        <a href="album.html">← Back to Album</a>
+    </div>
+
+    <section id="admin-memories">
+        <p>Loading memories...</p>
+    </section>
+
+    <script src="js/supabase-app.js"></script>
+    <script>
+        const adminSection = document.getElementById('admin-memories');
+
+        async function fetchMemories() {
+            try {
+                const res = await supabase
+                    .from('memories')
+                    .select('*')
+                    .order('timestamp', { ascending: false });
+
+                if (res.error) throw res.error;
+
+                const memories = res.data;
+                if (!memories.length) {
+                    adminSection.innerHTML = `
+                <div class="no-data">
+                    <p>No memories found. Upload some images first!</p>
+                    <a href="album.html">Go to Album</a>
+                </div>
+            `;
+                    return;
+                }
+
+                let html = `
+            <table>
+            <tr>
+                <th>ID</th>
+                <th>Image</th>
+                <th>Comment</th>
+                <th>Status</th>
+                <th>Timestamp</th>
+                <th>Action</th>
+            </tr>
+        `;
+
+                memories.forEach(mem => {
+                    html += `
+                <tr>
+                    <td>${mem.id}</td>
+                    <td><img src="${SUPABASE_URL}/storage/v1/object/public/memories/${mem.url}" alt="Memory"></td>
+                    <td>${mem.comment || ''}</td>
+                    <td class="${mem.status == 1 ? 'active' : 'deleted'}">
+                        ${mem.status == 1 ? 'Active' : 'Deleted'}
+                    </td>
+                    <td>${new Date(mem.timestamp).toLocaleString()}</td>
+                    <td>
+                        ${mem.status == 0 ? `<button class="restore-btn" onclick="restore(${mem.id})">Restore</button>` : ''}
+                    </td>
+                </tr>
+            `;
+                });
+
+                html += `</table>`;
+                adminSection.innerHTML = html;
+            } catch (err) {
+                adminSection.innerHTML = `<p style="color:red;">Error loading memories: ${err.message}</p>`;
+                console.error(err);
+            }
+        }
+
+        async function restore(id) {
+            if (!confirm('Restore this image?')) return;
+
+            try {
+                const { data, error } = await supabase
+                    .from('memories')
+                    .update({ status: 1 })
+                    .eq('id', id);
+
+                if (error) throw error;
+
+                alert('Restored successfully!');
+                fetchMemories();
+            } catch (err) {
+                alert('Error: ' + err.message);
+            }
+        }
+
+        // Initialize
+        fetchMemories();
+    </script>
+</body>
+
+</html>

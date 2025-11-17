@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Бидний бодол санаа 💭</title>
+    <link rel="stylesheet" href="css/thoughts.css" />
+    <link rel="icon" href="img/flowers.png" type="image/x-icon" />
+  </head>
+  <body>
+    <header>
+      <h1>Чиний хувийн блог 💭</h1>
+      <nav>
+        <a href="index.html">Нүүр</a>
+        <a href="flower.html">Flowers</a>
+        <a href="album.html">Албум</a>
+        <a href="thoughts.html" class="active">Note</a>
+      </nav>
+    </header>
+
+    <main class="thoughts-container">
+      <!-- Add Thought Form -->
+      <section class="add-thought-section">
+        <h2>Блог бичих ✍️</h2>
+        <form id="thoughtForm">
+          <div class="form-group">
+            <label for="authorInput">Хэн бичиж байна:</label>
+            <select id="authorInput" name="author" required>
+              <option value="">Сонгох...</option>
+              <option value="IronMan">IronMan</option>
+              <option value="Оюундарь">Оюу</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="contentInput">Бодол санаа:</label>
+            <textarea
+              id="contentInput"
+              name="content"
+              rows="5"
+              placeholder="Өнөөдөр юу бодож байна вэ?..."
+              required
+            ></textarea>
+          </div>
+          <button type="submit" id="submitBtn" class="submit-btn">
+            <span>💌 Илгээх</span>
+          </button>
+        </form>
+      </section>
+
+      <!-- Display Thoughts -->
+      <section class="thoughts-list">
+        <h2>Бидний бичсэн зүйлс 📝</h2>
+        <div id="thoughtsContainer"></div>
+      </section>
+    </main>
+
+    <footer>
+      <p>Зөвхөн Оюундарь-т ❤️</p>
+    </footer>
+
+    <!-- Module script -->
+    <script type="module" src="js/thoughts.js"></script>
+  </body>
+</html>

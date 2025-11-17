@@ -1,145 +1,130 @@
-const uploadBtn = document.getElementById("uploadBtn");
-const photoInput = document.getElementById("photoInput");
-const commentInput = document.getElementById("commentInput");
+// js/album.js
+import { supabaseFetch, SUPABASE_BUCKET, SUPABASE } from './supabase-app.js';
 
-// Upload functionality
-uploadBtn.addEventListener("click", async () => {
-  const file = photoInput.files[0];
-  const comment = commentInput.value.trim();
-  
-  if (!file) {
-    alert("Оруулах зургаа сонгоорой хөөрхнөө!");
-    return;
-  }
+const uploadForm = document.getElementById('uploadForm');
+const uploadBtn = document.getElementById('uploadBtn');
+const photoInput = document.getElementById('photoInput');
+const commentInput = document.getElementById('commentInput');
+const memoriesContainer = document.getElementById('memoriesContainer');
 
-  uploadBtn.disabled = true;
-  uploadBtn.innerHTML = '<span>⏳ Уншиж байна...</span>';
+// -------------------- Escape HTML --------------------
+function escapeHTML(str) {
+    return str.replace(/&/g, "&amp;")
+              .replace(/</g, "&lt;")
+              .replace(/>/g, "&gt;")
+              .replace(/"/g, "&quot;")
+              .replace(/'/g, "&#039;");
+}
 
-  const formData = new FormData();
-  formData.append("photo", file);
-  formData.append("comment", comment);
+// -------------------- Load Memories --------------------
+async function loadMemories() {
+    try {
+        const memories = await supabaseFetch('oyu_memories?status=eq.1');
+        if (!memories || memories.length === 0) {
+            memoriesContainer.innerHTML = '<p>Одоогоор дурсамж байхгүй байна.</p>';
+            return;
+        }
 
-  try {
-    const response = await fetch("upload.php", {
-      method: "POST",
-      body: formData,
+        memoriesContainer.innerHTML = memories.map(mem => `
+            <div class="memory uploaded-memory">
+                <img src="${SUPABASE.url}/storage/v1/object/public/${SUPABASE_BUCKET}/${mem.url}" alt="Memory">
+                <p>${escapeHTML(mem.comment || '')}</p>
+                <button class="delete-btn" data-id="${mem.id}">🗑️ Устгах</button>
+            </div>
+        `).join('');
+    } catch (err) {
+        console.error(err);
+        memoriesContainer.innerHTML = `<p>Алдаа гарлаа: ${escapeHTML(err.message)}</p>`;
+    }
+}
+
+// -------------------- Upload Photo --------------------
+async function uploadPhoto(file, comment) {
+    const fileName = `${Date.now()}_${file.name}`;
+    const uploadUrl = `${SUPABASE.url}/storage/v1/object/${SUPABASE_BUCKET}/${fileName}`;
+
+    // Upload to storage
+    const uploadRes = await fetch(uploadUrl, {
+        method: 'POST',
+        headers: {
+            'apikey': SUPABASE.key,
+            'Authorization': `Bearer ${SUPABASE.key}`
+        },
+        body: file
     });
 
-    const result = await response.json();
-    
-    if (result.error) {
-      alert(`Алдаа гарлаа: ${result.error}`);
-    } else {
-      alert("Амжилттай оруулсан! 🎉");
-      photoInput.value = "";
-      commentInput.value = "";
-      window.location.reload();
-    }
-  } catch (error) {
-    console.error("Upload failed:", error);
-    alert("Оруулахад алдаа гарлаа! Дахин оролдоно уу.");
-  } finally {
-    uploadBtn.disabled = false;
-    uploadBtn.innerHTML = '<span>📤 Оруулах</span>';
-  }
-});
+    if (!uploadRes.ok) throw new Error('Зургийг хадгалахдаа алдаа гарлаа');
 
-// Delete functionality
-document.addEventListener('click', async (e) => {
-  if (e.target.classList.contains('delete-btn') || e.target.closest('.delete-btn')) {
-    const btn = e.target.classList.contains('delete-btn') ? e.target : e.target.closest('.delete-btn');
-    const id = btn.dataset.id;
-    
-    if (!confirm('Энэ зургийг устгах уу?')) {
-      return;
-    }
+    // Insert into DB
+    await supabaseFetch('oyu_memories', {
+        method: 'POST',
+        body: JSON.stringify({ url: fileName, comment: comment || '', status: 1 })
+    });
+}
 
-    btn.disabled = true;
-    btn.innerHTML = '⏳';
+// -------------------- Upload Button --------------------
+uploadBtn.addEventListener('click', async () => {
+    const file = photoInput.files[0];
+    const comment = commentInput.value.trim();
+
+    if (!file) { alert('Зураг сонгоно уу!'); return; }
+
+    uploadBtn.disabled = true;
+    uploadBtn.textContent = '⏳ Оруулж байна...';
 
     try {
-      const formData = new FormData();
-      formData.append('id', id);
+        await uploadPhoto(file, comment);
+        alert('Амжилттай upload боллоо!');
+        uploadForm.reset();
+        await loadMemories();
+    } catch (err) {
+        console.error(err);
+        alert('Алдаа гарлаа: ' + err.message);
+    } finally {
+        uploadBtn.disabled = false;
+        uploadBtn.textContent = '📤 Оруулах';
+    }
+});
 
-      const response = await fetch('delete.php', {
-        method: 'POST',
-        body: formData
-      });
+// -------------------- Delete Photo --------------------
+document.addEventListener('click', async (e) => {
+    if (!e.target.classList.contains('delete-btn')) return;
 
-      const result = await response.json();
+    const btn = e.target;
+    const id = btn.dataset.id;
 
-      if (result.success) {
-        // Remove the memory element with animation
-        const memoryElement = btn.closest('.memory');
-        memoryElement.style.opacity = '0';
-        memoryElement.style.transform = 'scale(0.8)';
-        
-        setTimeout(() => {
-          memoryElement.remove();
-          alert('Амжилттай устгалаа! ✅');
-        }, 300);
-      } else {
-        alert(`Алдаа: ${result.error}`);
+    if (!confirm('Энэ зургыг устгах уу?')) return;
+
+    btn.disabled = true;
+    btn.textContent = '⏳';
+
+    try {
+        const records = await supabaseFetch(`oyu_memories?id=eq.${id}`);
+        if (!records[0]) throw new Error('Record олдсонгүй');
+        const fileName = records[0].url;
+
+        // Delete from storage
+        const deleteRes = await fetch(`${SUPABASE.url}/storage/v1/object/${SUPABASE_BUCKET}/${fileName}`, {
+            method: 'DELETE',
+            headers: {
+                'apikey': SUPABASE.key,
+                'Authorization': `Bearer ${SUPABASE.key}`
+            }
+        });
+        if (!deleteRes.ok) throw new Error('Storage-с устгахад алдаа гарлаа');
+
+        // Delete from DB
+        await supabaseFetch(`oyu_memories?id=eq.${id}`, { method: 'DELETE' });
+
+        // Remove from DOM
+        btn.closest('.uploaded-memory').remove();
+    } catch (err) {
+        console.error(err);
+        alert('Алдаа гарлаа: ' + err.message);
         btn.disabled = false;
-        btn.innerHTML = '🗑️';
-      }
-    } catch (error) {
-      console.error('Delete failed:', error);
-      alert('Устгахад алдаа гарлаа!');
-      btn.disabled = false;
-      btn.innerHTML = '🗑️';
+        btn.textContent = '🗑️';
     }
-  }
 });
 
-// Image preview
-photoInput.addEventListener('change', (e) => {
-  const file = e.target.files[0];
-  if (file) {
-    const existingPreview = document.querySelector('.image-preview');
-    if (existingPreview) {
-      existingPreview.remove();
-    }
-
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const preview = document.createElement('div');
-      preview.className = 'image-preview';
-      preview.innerHTML = `
-        <img src="${event.target.result}" alt="Preview" />
-        <button type="button" class="remove-preview">✕</button>
-      `;
-      
-      const formGroup = photoInput.closest('.form-group');
-      formGroup.appendChild(preview);
-
-      preview.querySelector('.remove-preview').addEventListener('click', () => {
-        preview.remove();
-        photoInput.value = '';
-      });
-    };
-    reader.readAsDataURL(file);
-  }
-});
-
-// Scroll to top button
-const scrollBtn = document.createElement('button');
-scrollBtn.className = 'scroll-to-top';
-scrollBtn.innerHTML = '↑';
-scrollBtn.style.display = 'none';
-document.body.appendChild(scrollBtn);
-
-window.addEventListener('scroll', () => {
-  if (window.pageYOffset > 300) {
-    scrollBtn.style.display = 'block';
-  } else {
-    scrollBtn.style.display = 'none';
-  }
-});
-
-scrollBtn.addEventListener('click', () => {
-  window.scrollTo({
-    top: 0,
-    behavior: 'smooth'
-  });
-});
+// -------------------- Initial Load --------------------
+loadMemories();
