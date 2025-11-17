@@ -1,171 +1,115 @@
+import { supabaseFetch } from './supabase-app.js';
+
 const thoughtForm = document.getElementById('thoughtForm');
 const submitBtn = document.getElementById('submitBtn');
 const authorInput = document.getElementById('authorInput');
 const contentInput = document.getElementById('contentInput');
+const thoughtsContainer = document.getElementById('thoughtsContainer');
 
-// Character counter
 const maxChars = 5000;
-const charCounterDiv = document.createElement('div');
-charCounterDiv.className = 'char-counter';
-contentInput.parentElement.appendChild(charCounterDiv);
 
-contentInput.addEventListener('input', () => {
-  const remaining = maxChars - contentInput.value.length;
-  charCounterDiv.textContent = `${remaining} тэмдэгт үлдсэн`;
-  
-  if (remaining < 100) {
-    charCounterDiv.classList.add('danger');
-    charCounterDiv.classList.remove('warning');
-  } else if (remaining < 500) {
-    charCounterDiv.classList.add('warning');
-    charCounterDiv.classList.remove('danger');
-  } else {
-    charCounterDiv.classList.remove('warning', 'danger');
-  }
-});
+// -------------------- Char Counter --------------------
+if (contentInput) {
+    const charCounterDiv = document.createElement('div');
+    charCounterDiv.className = 'char-counter';
+    contentInput.parentElement.appendChild(charCounterDiv);
 
-// Submit thought
-thoughtForm.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  
-  console.log('Form submitted'); // Debug log
-  
-  const author = authorInput.value.trim();
-  const content = contentInput.value.trim();
-  
-  console.log('Author:', author); // Debug log
-  console.log('Content:', content); // Debug log
-  
-  if (!author || !content) {
-    alert('Бүх талбарыг бөглөнө үү!');
-    return;
-  }
-  
-  submitBtn.disabled = true;
-  submitBtn.innerHTML = '<span>⏳ Илгээж байна...</span>';
-  
-  const formData = new FormData();
-  formData.append('author', author);
-  formData.append('content', content);
-  
-  try {
-    console.log('Sending request to add_thought.php'); // Debug log
-    
-    const response = await fetch('add_thought.php', {
-      method: 'POST',
-      body: formData
+    contentInput.addEventListener('input', () => {
+        const remaining = maxChars - contentInput.value.length;
+        charCounterDiv.textContent = `${remaining} тэмдэгт үлдсэн`;
+        charCounterDiv.classList.remove('warning','danger');
+        if (remaining < 100) charCounterDiv.classList.add('danger');
+        else if (remaining < 500) charCounterDiv.classList.add('warning');
     });
-    
-    console.log('Response status:', response.status); // Debug log
-    
-    const text = await response.text();
-    console.log('Response text:', text); // Debug log
-    
-    let result;
+
+    charCounterDiv.textContent = `${maxChars} тэмдэгт үлдсэн`;
+}
+
+// -------------------- Escape HTML --------------------
+function escapeHTML(str) {
+    return str.replace(/&/g, "&amp;")
+              .replace(/</g, "&lt;")
+              .replace(/>/g, "&gt;")
+              .replace(/"/g, "&quot;")
+              .replace(/'/g, "&#039;");
+}
+
+// -------------------- Load Thoughts --------------------
+async function loadThoughts() {
     try {
-      result = JSON.parse(text);
-    } catch (e) {
-      console.error('JSON parse error:', e);
-      alert('Серверээс буруу хариу ирлээ: ' + text);
-      return;
+        const thoughts = await supabaseFetch('thoughts?status=eq.1');
+        if (!thoughts || thoughts.length === 0) {
+            thoughtsContainer.innerHTML = '<p>Одоогоор бодол санаа байхгүй байна.</p>';
+            return;
+        }
+
+        thoughtsContainer.innerHTML = thoughts.map(t => `
+            <div class="thought-card">
+                <strong>${escapeHTML(t.author)}</strong>
+                <p>${escapeHTML(t.content)}</p>
+                <button class="delete-thought-btn" data-id="${t.id}">✕</button>
+            </div>
+        `).join('');
+    } catch (err) {
+        console.error(err);
+        thoughtsContainer.innerHTML = `<p>Алдаа гарлаа: ${escapeHTML(err.message)}</p>`;
     }
-    
-    console.log('Result:', result); // Debug log
-    
-    if (result.success) {
-      alert(result.message);
-      thoughtForm.reset();
-      charCounterDiv.textContent = '';
-      window.location.reload();
-    } else {
-      alert(`Алдаа: ${result.error}`);
-    }
-  } catch (error) {
-    console.error('Error:', error);
-    alert('Илгээхэд алдаа гарлаа: ' + error.message);
-  } finally {
-    submitBtn.disabled = false;
-    submitBtn.innerHTML = '<span>💌 Илгээх</span>';
-  }
-});
+}
 
-// Delete thought
-document.addEventListener('click', async (e) => {
-  if (e.target.classList.contains('delete-thought-btn') || e.target.closest('.delete-thought-btn')) {
-    const btn = e.target.classList.contains('delete-thought-btn') ? e.target : e.target.closest('.delete-thought-btn');
-    const id = btn.dataset.id;
-    
-    if (!confirm('Энэ бодол санааг устгах уу?')) {
-      return;
-    }
-    
-    btn.disabled = true;
-    btn.innerHTML = '⏳';
-    
-    try {
-      const formData = new FormData();
-      formData.append('id', id);
-      
-      const response = await fetch('delete_thought.php', {
-        method: 'POST',
-        body: formData
-      });
-      
-      const result = await response.json();
-      
-      if (result.success) {
-        const thoughtCard = btn.closest('.thought-card');
-        thoughtCard.style.opacity = '0';
-        thoughtCard.style.transform = 'translateX(-30px)';
-        
-        setTimeout(() => {
-          thoughtCard.remove();
-          
-          const remainingThoughts = document.querySelectorAll('.thought-card');
-          if (remainingThoughts.length === 0) {
-            const thoughtsList = document.querySelector('.thoughts-list');
-            thoughtsList.innerHTML = `
-              <h2>Бидний бичсэн зүйлс 📝</h2>
-              <div class="no-thoughts">
-                <p>Одоогоор бодол санаа байхгүй байна. Эхнийхийг нь бичээрэй! 💭</p>
-              </div>
-            `;
-          }
-        }, 300);
-      } else {
-        alert(`Алдаа: ${result.error}`);
-        btn.disabled = false;
-        btn.innerHTML = '✕';
-      }
-    } catch (error) {
-      console.error('Delete failed:', error);
-      alert('Устгахад алдаа гарлаа!');
-      btn.disabled = false;
-      btn.innerHTML = '✕';
-    }
-  }
-});
+// -------------------- Add Thought --------------------
+if (thoughtForm) {
+    thoughtForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const author = authorInput.value.trim();
+        const content = contentInput.value.trim();
+        if (!author || !content) {
+            alert('Бүх талбарыг бөглөнө үү!');
+            return;
+        }
 
-// Scroll to top button
-const scrollBtn = document.createElement('button');
-scrollBtn.className = 'scroll-to-top';
-scrollBtn.innerHTML = '↑';
-document.body.appendChild(scrollBtn);
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span>⏳ Илгээж байна...</span>';
 
-window.addEventListener('scroll', () => {
-  if (window.pageYOffset > 300) {
-    scrollBtn.style.display = 'block';
-  } else {
-    scrollBtn.style.display = 'none';
-  }
-});
+        try {
+            await supabaseFetch('thoughts', {
+                method: 'POST',
+                body: JSON.stringify({ author, content, status: 1 })
+            });
 
-scrollBtn.addEventListener('click', () => {
-  window.scrollTo({
-    top: 0,
-    behavior: 'smooth'
-  });
-});
+            thoughtForm.reset();
+            loadThoughts();
+        } catch (err) {
+            console.error(err);
+            alert('Алдаа гарлаа: ' + err.message);
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<span>💌 Илгээх</span>';
+        }
+    });
 
-// Initialize character counter
-charCounterDiv.textContent = `${maxChars} тэмдэгт үлдсэн`;
+    // -------------------- Delete Thought --------------------
+    document.addEventListener('click', async (e) => {
+        if (!e.target.classList.contains('delete-thought-btn')) return;
+
+        const btn = e.target;
+        const id = btn.dataset.id;
+
+        if (!confirm('Энэ бодол санааг устгах уу?')) return;
+
+        btn.disabled = true;
+        btn.textContent = '⏳';
+
+        try {
+            await supabaseFetch(`thoughts?id=eq.${id}`, { method: 'DELETE' });
+            btn.closest('.thought-card').remove();
+        } catch (err) {
+            console.error(err);
+            alert('Алдаа гарлаа: ' + err.message);
+            btn.disabled = false;
+            btn.textContent = '✕';
+        }
+    });
+}
+
+// -------------------- Initial Load --------------------
+loadThoughts();
