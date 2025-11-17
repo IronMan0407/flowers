@@ -11,7 +11,9 @@ export async function supabaseFetch(path, options = {}) {
         ...options,
     });
     if (!res.ok) throw new Error(`Supabase request failed: ${res.status}`);
-    return res.json();
+    // return res.json();
+    const text = await res.text();
+    return text ? JSON.parse(text) : null;
 }
 
 export const SUPABASE_BUCKET = "memories";

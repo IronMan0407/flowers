@@ -1,4 +1,3 @@
-// js/album.js
 import { supabaseFetch, SUPABASE_BUCKET, SUPABASE } from './supabase-app.js';
 
 const uploadForm = document.getElementById('uploadForm');
@@ -7,34 +6,20 @@ const photoInput = document.getElementById('photoInput');
 const commentInput = document.getElementById('commentInput');
 const memoriesContainer = document.getElementById('memoriesContainer');
 
-// -------------------- Escape HTML --------------------
-function escapeHTML(str) {
-    return str.replace(/&/g, "&amp;")
-              .replace(/</g, "&lt;")
-              .replace(/>/g, "&gt;")
-              .replace(/"/g, "&quot;")
-              .replace(/'/g, "&#039;");
-}
-
 // -------------------- Load Memories --------------------
 async function loadMemories() {
     try {
-        const memories = await supabaseFetch('oyu_memories?status=eq.1');
-        if (!memories || memories.length === 0) {
-            memoriesContainer.innerHTML = '<p>Одоогоор дурсамж байхгүй байна.</p>';
-            return;
-        }
-
+        const memories = await supabaseFetch('oyu_memories?status=eq.1') || [];
         memoriesContainer.innerHTML = memories.map(mem => `
             <div class="memory uploaded-memory">
                 <img src="${SUPABASE.url}/storage/v1/object/public/${SUPABASE_BUCKET}/${mem.url}" alt="Memory">
-                <p>${escapeHTML(mem.comment || '')}</p>
+                <p>${mem.comment || ''}</p>
                 <button class="delete-btn" data-id="${mem.id}">🗑️ Устгах</button>
             </div>
         `).join('');
     } catch (err) {
         console.error(err);
-        memoriesContainer.innerHTML = `<p>Алдаа гарлаа: ${escapeHTML(err.message)}</p>`;
+        memoriesContainer.innerHTML = '<p>Алдаа гарлаа: ' + err.message + '</p>';
     }
 }
 
@@ -66,7 +51,6 @@ async function uploadPhoto(file, comment) {
 uploadBtn.addEventListener('click', async () => {
     const file = photoInput.files[0];
     const comment = commentInput.value.trim();
-
     if (!file) { alert('Зураг сонгоно уу!'); return; }
 
     uploadBtn.disabled = true;
@@ -74,9 +58,9 @@ uploadBtn.addEventListener('click', async () => {
 
     try {
         await uploadPhoto(file, comment);
-        alert('Амжилттай upload боллоо!');
         uploadForm.reset();
         await loadMemories();
+        alert('Амжилттай upload боллоо!');
     } catch (err) {
         console.error(err);
         alert('Алдаа гарлаа: ' + err.message);
@@ -99,17 +83,14 @@ document.addEventListener('click', async (e) => {
     btn.textContent = '⏳';
 
     try {
-        const records = await supabaseFetch(`oyu_memories?id=eq.${id}`);
+        const records = await supabaseFetch(`oyu_memories?id=eq.${id}`) || [];
         if (!records[0]) throw new Error('Record олдсонгүй');
         const fileName = records[0].url;
 
         // Delete from storage
         const deleteRes = await fetch(`${SUPABASE.url}/storage/v1/object/${SUPABASE_BUCKET}/${fileName}`, {
             method: 'DELETE',
-            headers: {
-                'apikey': SUPABASE.key,
-                'Authorization': `Bearer ${SUPABASE.key}`
-            }
+            headers: { 'apikey': SUPABASE.key, 'Authorization': `Bearer ${SUPABASE.key}` }
         });
         if (!deleteRes.ok) throw new Error('Storage-с устгахад алдаа гарлаа');
 

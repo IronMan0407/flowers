@@ -37,8 +37,8 @@ function escapeHTML(str) {
 // -------------------- Load Thoughts --------------------
 async function loadThoughts() {
     try {
-        const thoughts = await supabaseFetch('thoughts?status=eq.1');
-        if (!thoughts || thoughts.length === 0) {
+        const thoughts = await supabaseFetch('thoughts?status=eq.1') || [];
+        if (thoughts.length === 0) {
             thoughtsContainer.innerHTML = '<p>Одоогоор бодол санаа байхгүй байна.</p>';
             return;
         }
@@ -77,7 +77,7 @@ if (thoughtForm) {
             });
 
             thoughtForm.reset();
-            loadThoughts();
+            await loadThoughts();
         } catch (err) {
             console.error(err);
             alert('Алдаа гарлаа: ' + err.message);
@@ -93,7 +93,6 @@ if (thoughtForm) {
 
         const btn = e.target;
         const id = btn.dataset.id;
-
         if (!confirm('Энэ бодол санааг устгах уу?')) return;
 
         btn.disabled = true;
