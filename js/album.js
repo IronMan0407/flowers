@@ -29,25 +29,27 @@ async function loadMemories() {
 async function uploadPhoto(file, comment) {
     const fileName = `${Date.now()}_${file.name}`;
 
-    const uploadUrl = `${SUPABASE.url}/storage/v1/object/${SUPABASE_BUCKET}/${fileName}`;
+    const formData = new FormData();
+    formData.append("file", file);
+
+    // Correct Supabase upload endpoint
+    const uploadUrl = `${SUPABASE.url}/storage/v1/object/${SUPABASE_BUCKET}/upload`;
 
     const uploadRes = await fetch(uploadUrl, {
         method: 'POST',
         headers: {
             'apikey': SUPABASE.key,
-            'Authorization': `Bearer ${SUPABASE.key}`,
-            'Content-Type': file.type
+            'Authorization': `Bearer ${SUPABASE.key}`
         },
-        body: file
+        body: formData
     });
 
     if (!uploadRes.ok) {
-        const errTxt = await uploadRes.text();
-        console.error(errTxt);
-        throw new Error('Зургийг хадгалах үед алдаа гарлаа');
+        console.error(await uploadRes.text());
+        throw new Error('Зургийг хадгалахдаа алдаа гарлаа');
     }
 
-    // DB insert
+    // DB-д оруулах
     await supabaseFetch('oyu_memories', {
         method: 'POST',
         body: JSON.stringify({
