@@ -26,34 +26,38 @@ async function loadMemories() {
 }
 
 // -------------------- Upload Photo --------------------
+// album.js - зөв uploadPhoto функц
 async function uploadPhoto(file, comment) {
-    const fileName = `${Date.now()}_${file.name}`;
+    // fileName-д зай, тусгай тэмдэгт орохоос хамгаалж нэгэн мөр болгож өгөх
+    const safeName = `${Date.now()}_${file.name}`; // эсвэл encodeURIComponent(file.name) хэрэглэж болно
+    const uploadUrl = `${SUPABASE.url}/storage/v1/object/${SUPABASE_BUCKET}/upload`;
 
     const formData = new FormData();
-    formData.append("file", file);
-
-    // Correct Supabase upload endpoint
-    const uploadUrl = `${SUPABASE.url}/storage/v1/object/${SUPABASE_BUCKET}/upload`;
+    formData.append('file', file);
+    formData.append('fileName', safeName);
+    // optional: formData.append('cacheControl', '3600'); 
 
     const uploadRes = await fetch(uploadUrl, {
         method: 'POST',
         headers: {
             'apikey': SUPABASE.key,
             'Authorization': `Bearer ${SUPABASE.key}`
+            // NOTE: 'Content-Type' бүү тавь — браузер автоматаар multipart/form-data-аар тохируулна
         },
         body: formData
     });
 
     if (!uploadRes.ok) {
-        console.error(await uploadRes.text());
+        const body = await uploadRes.text();
+        console.error('Storage upload failed response:', body);
         throw new Error('Зургийг хадгалахдаа алдаа гарлаа');
     }
 
-    // DB-д оруулах
+    // амжилттай upload болсны дараа DB-д бичнэ
     await supabaseFetch('oyu_memories', {
         method: 'POST',
         body: JSON.stringify({
-            url: fileName,
+            url: safeName,
             comment: comment || '',
             status: 1
         })
