@@ -10,6 +10,7 @@ const memoriesContainer = document.getElementById('memoriesContainer');
 async function loadMemories() {
     try {
         const memories = await supabaseFetch('oyu_memories?status=eq.1') || [];
+
         memoriesContainer.innerHTML = memories.map(mem => `
             <div class="memory uploaded-memory">
                 <img src="${SUPABASE.url}/storage/v1/object/public/${SUPABASE_BUCKET}/${mem.url}" alt="Memory">
@@ -17,6 +18,7 @@ async function loadMemories() {
                 <button class="delete-btn" data-id="${mem.id}">🗑️ Устгах</button>
             </div>
         `).join('');
+
     } catch (err) {
         console.error(err);
         memoriesContainer.innerHTML = '<p>Алдаа гарлаа: ' + err.message + '</p>';
@@ -27,33 +29,32 @@ async function loadMemories() {
 async function uploadPhoto(file, comment) {
     const fileName = `${Date.now()}_${file.name}`;
 
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("fileName", fileName);
-    formData.append("bucketName", SUPABASE_BUCKET);
-
-    // Correct upload endpoint
-    const uploadUrl = `${SUPABASE.url}/storage/v1/object/upload`;
+    const uploadUrl = `${SUPABASE.url}/storage/v1/object/${SUPABASE_BUCKET}/${fileName}`;
 
     const uploadRes = await fetch(uploadUrl, {
         method: 'POST',
         headers: {
             'apikey': SUPABASE.key,
-            'Authorization': `Bearer ${SUPABASE.key}`
+            'Authorization': `Bearer ${SUPABASE.key}`,
+            'Content-Type': file.type
         },
-        body: formData
+        body: file
     });
 
     if (!uploadRes.ok) {
         const errTxt = await uploadRes.text();
         console.error(errTxt);
-        throw new Error('Зургийг хадгалахдаа алдаа гарлаа');
+        throw new Error('Зургийг хадгалах үед алдаа гарлаа');
     }
 
-    // DB-д оруулах
+    // DB insert
     await supabaseFetch('oyu_memories', {
         method: 'POST',
-        body: JSON.stringify({ url: fileName, comment: comment || '', status: 1 })
+        body: JSON.stringify({
+            url: fileName,
+            comment: comment || '',
+            status: 1
+        })
     });
 }
 
@@ -61,7 +62,7 @@ async function uploadPhoto(file, comment) {
 uploadBtn.addEventListener('click', async () => {
     const file = photoInput.files[0];
     const comment = commentInput.value.trim();
-    if (!file) { alert('Зураг сонгоно уу!'); return; }
+    if (!file) return alert('Зураг сонгоно уу!');
 
     uploadBtn.disabled = true;
     uploadBtn.textContent = '⏳ Оруулж байна...';
@@ -70,7 +71,7 @@ uploadBtn.addEventListener('click', async () => {
         await uploadPhoto(file, comment);
         uploadForm.reset();
         await loadMemories();
-        alert('Амжилттай upload боллоо!');
+        alert('Амжилттай upload хийлээ!');
     } catch (err) {
         console.error(err);
         alert('Алдаа гарлаа: ' + err.message);
@@ -97,21 +98,22 @@ document.addEventListener('click', async (e) => {
         if (!records[0]) throw new Error('Record олдсонгүй');
         const fileName = records[0].url;
 
-        // Delete from storage
         const deleteRes = await fetch(`${SUPABASE.url}/storage/v1/object/${SUPABASE_BUCKET}/${fileName}`, {
             method: 'DELETE',
-            headers: { 'apikey': SUPABASE.key, 'Authorization': `Bearer ${SUPABASE.key}` }
+            headers: {
+                'apikey': SUPABASE.key,
+                'Authorization': `Bearer ${SUPABASE.key}`
+            }
         });
+
         if (!deleteRes.ok) throw new Error('Storage-с устгахад алдаа гарлаа');
 
-        // Delete from DB
         await supabaseFetch(`oyu_memories?id=eq.${id}`, { method: 'DELETE' });
 
-        // Remove from DOM
         btn.closest('.uploaded-memory').remove();
     } catch (err) {
         console.error(err);
-        alert('Алдаа гарлаа: ' + err.message);
+        alert(err.message);
         btn.disabled = false;
         btn.textContent = '🗑️';
     }
