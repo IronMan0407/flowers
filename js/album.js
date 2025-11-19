@@ -26,39 +26,34 @@ async function loadMemories() {
 }
 
 // -------------------- Upload Photo --------------------
-// album.js - зөв uploadPhoto функц
 async function uploadPhoto(file, comment) {
-    // fileName-д зай, тусгай тэмдэгт орохоос хамгаалж нэгэн мөр болгож өгөх
-    const safeName = `${Date.now()}_${file.name}`; // эсвэл encodeURIComponent(file.name) хэрэглэж болно
-    const uploadUrl = `${SUPABASE.url}/storage/v1/object/${SUPABASE_BUCKET}/upload`;
+    const safeName = `${Date.now()}_${file.name.replace(/\s+/g, "_")}`;
+    const filePath = `${safeName}`; // bucket-ийн root дээр хадгална
 
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('fileName', safeName);
-    // optional: formData.append('cacheControl', '3600'); 
+    const uploadUrl = `${SUPABASE.url}/storage/v1/object/${SUPABASE_BUCKET}/${filePath}`;
 
     const uploadRes = await fetch(uploadUrl, {
         method: 'POST',
         headers: {
             'apikey': SUPABASE.key,
-            'Authorization': `Bearer ${SUPABASE.key}`
-            // NOTE: 'Content-Type' бүү тавь — браузер автоматаар multipart/form-data-аар тохируулна
+            'Authorization': `Bearer ${SUPABASE.key}`,
+            // Content-Type тавихгүй — браузер өөрөө multipart болгоно
         },
-        body: formData
+        body: file   // ❗ FormData биш, шууд file body
     });
 
     if (!uploadRes.ok) {
         const body = await uploadRes.text();
-        console.error('Storage upload failed response:', body);
-        throw new Error('Зургийг хадгалахдаа алдаа гарлаа');
+        console.error("Upload Error:", body);
+        throw new Error("Storage upload failed");
     }
 
-    // амжилттай upload болсны дараа DB-д бичнэ
+    // --- Insert into DB ---
     await supabaseFetch('oyu_memories', {
         method: 'POST',
         body: JSON.stringify({
             url: safeName,
-            comment: comment || '',
+            comment: comment || "",
             status: 1
         })
     });
