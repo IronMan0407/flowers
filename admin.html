@@ -107,7 +107,7 @@
         async function fetchMemories() {
             try {
                 const { data: memories, error } = await supabase
-                    .from('memories')
+                    .from('oyu_memories')
                     .select('*')
                     .order('timestamp', { ascending: false });
 
@@ -166,7 +166,7 @@
 
             try {
                 const { data, error } = await supabase
-                    .from('memories')
+                    .from('oyu_memories')
                     .update({ status: 1 })
                     .eq('id', id);
 
