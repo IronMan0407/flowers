@@ -97,11 +97,10 @@
     <script type="module">
         import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
-        // Replace with your own values
-        const SUPABASE_URL = 'https://YOUR_SUPABASE_URL.supabase.co'
-        const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY'
+        const SUPABASE_URL = 'https://uvzrvsskeeqiincskydx.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV2enJ2c3NrZWVxaWluY3NreWR4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMzNDI3MjMsImV4cCI6MjA3ODkxODcyM30.5xXIx2KA2iDufVAqfG4q0_CG9-L7gLnxGplPzLWS5aU';
 
-        const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+        const supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
 
         const adminSection = document.getElementById('admin-memories')
 
