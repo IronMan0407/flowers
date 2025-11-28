@@ -28,7 +28,7 @@ async function loadMemories() {
 // -------------------- Upload Photo --------------------
 async function uploadPhoto(file, comment) {
     const safeName = `${Date.now()}_${file.name.replace(/\s+/g, "_")}`;
-    const filePath = `${safeName}`; // bucket-ийн root дээр хадгална
+    const filePath = `${safeName}`;
 
     const uploadUrl = `${SUPABASE.url}/storage/v1/object/${SUPABASE_BUCKET}/${filePath}`;
 
@@ -36,10 +36,9 @@ async function uploadPhoto(file, comment) {
         method: 'POST',
         headers: {
             'apikey': SUPABASE.key,
-            'Authorization': `Bearer ${SUPABASE.key}`,
-            // Content-Type тавихгүй — браузер өөрөө multipart болгоно
+            'Authorization': `Bearer ${SUPABASE.key}`
         },
-        body: file   // ❗ FormData биш, шууд file body
+        body: file
     });
 
     if (!uploadRes.ok) {
@@ -48,7 +47,6 @@ async function uploadPhoto(file, comment) {
         throw new Error("Storage upload failed");
     }
 
-    // --- Insert into DB ---
     await supabaseFetch('oyu_memories', {
         method: 'POST',
         body: JSON.stringify({
@@ -82,7 +80,7 @@ uploadBtn.addEventListener('click', async () => {
     }
 });
 
-// -------------------- Delete Photo --------------------
+// -------------------- Delete (Soft Delete) --------------------
 document.addEventListener('click', async (e) => {
     if (!e.target.classList.contains('delete-btn')) return;
 
@@ -95,23 +93,18 @@ document.addEventListener('click', async (e) => {
     btn.textContent = '⏳';
 
     try {
-        const records = await supabaseFetch(`oyu_memories?id=eq.${id}`) || [];
-        if (!records[0]) throw new Error('Record олдсонгүй');
-        const fileName = records[0].url;
-
-        const deleteRes = await fetch(`${SUPABASE.url}/storage/v1/object/${SUPABASE_BUCKET}/${fileName}`, {
-            method: 'DELETE',
-            headers: {
-                'apikey': SUPABASE.key,
-                'Authorization': `Bearer ${SUPABASE.key}`
-            }
+        // Soft delete: just set status = 0
+        const { error } = await supabaseFetch(`oyu_memories?id=eq.${id}`, {
+            method: 'PATCH', // use PATCH to update
+            body: JSON.stringify({ status: 0 })
         });
 
-        if (!deleteRes.ok) throw new Error('Storage-с устгахад алдаа гарлаа');
+        if (error) throw error;
 
-        await supabaseFetch(`oyu_memories?id=eq.${id}`, { method: 'DELETE' });
-
+        // Remove from DOM
         btn.closest('.uploaded-memory').remove();
+
+        alert('Амжилттай устгалаа (Soft Delete)!');
     } catch (err) {
         console.error(err);
         alert(err.message);
