@@ -93,64 +93,72 @@
         <p>Loading memories...</p>
     </section>
 
-    <script src="js/supabase-app.js"></script>
-    <script>
-        const adminSection = document.getElementById('admin-memories');
+    <!-- Load Supabase as ES module -->
+    <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+
+        // Replace with your own values
+        const SUPABASE_URL = 'https://YOUR_SUPABASE_URL.supabase.co'
+        const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY'
+
+        const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+
+        const adminSection = document.getElementById('admin-memories')
 
         async function fetchMemories() {
             try {
-                const res = await supabase
+                const { data: memories, error } = await supabase
                     .from('memories')
                     .select('*')
                     .order('timestamp', { ascending: false });
 
-                if (res.error) throw res.error;
+                if (error) throw error
 
-                const memories = res.data;
                 if (!memories.length) {
                     adminSection.innerHTML = `
-                <div class="no-data">
-                    <p>No memories found. Upload some images first!</p>
-                    <a href="album.html">Go to Album</a>
-                </div>
-            `;
+                        <div class="no-data">
+                            <p>No memories found. Upload some images first!</p>
+                            <a href="album.html">Go to Album</a>
+                        </div>
+                    `;
                     return;
                 }
 
                 let html = `
-            <table>
-            <tr>
-                <th>ID</th>
-                <th>Image</th>
-                <th>Comment</th>
-                <th>Status</th>
-                <th>Timestamp</th>
-                <th>Action</th>
-            </tr>
-        `;
+                    <table>
+                    <tr>
+                        <th>ID</th>
+                        <th>Image</th>
+                        <th>Comment</th>
+                        <th>Status</th>
+                        <th>Timestamp</th>
+                        <th>Action</th>
+                    </tr>
+                `;
 
                 memories.forEach(mem => {
                     html += `
-                <tr>
-                    <td>${mem.id}</td>
-                    <td><img src="${SUPABASE_URL}/storage/v1/object/public/memories/${mem.url}" alt="Memory"></td>
-                    <td>${mem.comment || ''}</td>
-                    <td class="${mem.status == 1 ? 'active' : 'deleted'}">
-                        ${mem.status == 1 ? 'Active' : 'Deleted'}
-                    </td>
-                    <td>${new Date(mem.timestamp).toLocaleString()}</td>
-                    <td>
-                        ${mem.status == 0 ? `<button class="restore-btn" onclick="restore(${mem.id})">Restore</button>` : ''}
-                    </td>
-                </tr>
-            `;
+                        <tr>
+                            <td>${mem.id}</td>
+                            <td><img src="${SUPABASE_URL}/storage/v1/object/public/memories/${mem.url}" alt="Memory"></td>
+                            <td>${mem.comment || ''}</td>
+                            <td class="${mem.status == 1 ? 'active' : 'deleted'}">
+                                ${mem.status == 1 ? 'Active' : 'Deleted'}
+                            </td>
+                            <td>${new Date(mem.timestamp).toLocaleString()}</td>
+                            <td>
+                                ${mem.status == 0 ? `<button class="restore-btn" onclick="restore(${mem.id})">Restore</button>` : ''}
+                            </td>
+                        </tr>
+                    `;
                 });
 
                 html += `</table>`;
                 adminSection.innerHTML = html;
+
             } catch (err) {
                 adminSection.innerHTML = `<p style="color:red;">Error loading memories: ${err.message}</p>`;
-                console.error(err);
+                console.error(err)
             }
         }
 
@@ -163,17 +171,20 @@
                     .update({ status: 1 })
                     .eq('id', id);
 
-                if (error) throw error;
+                if (error) throw error
 
-                alert('Restored successfully!');
-                fetchMemories();
+                alert('Restored successfully!')
+                fetchMemories()
             } catch (err) {
-                alert('Error: ' + err.message);
+                alert('Error: ' + err.message)
             }
         }
 
+        // Make restore function global (so onclick in HTML works)
+        window.restore = restore
+
         // Initialize
-        fetchMemories();
+        fetchMemories()
     </script>
 </body>
 
