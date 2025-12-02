@@ -44,7 +44,7 @@ async function loadThoughts() {
         }
 
         thoughtsContainer.innerHTML = thoughts.map(t => {
-            const timestamp = new Date(t.created_at).toLocaleString('mn-MN', {
+            const timestamp = new Date(t.timestamp.replace('T', ' ').replace(/\+\d{2}:\d{2}$/, 'Z')).toLocaleString('mn-MN', {
                 year: 'numeric',
                 month: 'long',
                 day: 'numeric',
