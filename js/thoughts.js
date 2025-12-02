@@ -53,9 +53,11 @@ async function loadThoughts() {
             });
             return `
                 <div class="thought-card">
-                    <strong>${escapeHTML(t.author)}</strong>
-                    <p>${escapeHTML(t.content)}</p>
-                    <small>${timestamp}</small>
+                    <div class="thought-header">
+                        <span class="thought-date">${timestamp}</span>
+                        <strong class="thought-author">${escapeHTML(t.author)}</strong>
+                    </div>
+                    <p class="thought-content">${escapeHTML(t.content)}</p>
                     <button class="delete-thought-btn" data-id="${t.id}">✕</button>
                 </div>
             `;
