@@ -25,6 +25,17 @@ if (contentInput) {
     charCounterDiv.textContent = `${maxChars} тэмдэгт үлдсэн`;
 }
 
+function formatDate(ts) {
+    const date = new Date(ts);
+    return date.toLocaleString("mn-MN", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit"
+    });
+}
+
 // -------------------- Escape HTML --------------------
 function escapeHTML(str) {
     return str.replace(/&/g, "&amp;")
@@ -43,25 +54,14 @@ async function loadThoughts() {
             return;
         }
 
-        thoughtsContainer.innerHTML = thoughts.map(t => {
-            const timestamp = new Date(t.timestamp.replace('T', ' ').replace(/\+\d{2}:\d{2}$/, 'Z')).toLocaleString('mn-MN', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            });
-            return `
-                <div class="thought-card">
-                    <div class="thought-header">
-                        <span class="thought-date">${timestamp}</span>
-                        <strong class="thought-author">${escapeHTML(t.author)}</strong>
-                    </div>
-                    <p class="thought-content">${escapeHTML(t.content)}</p>
-                    <button class="delete-thought-btn" data-id="${t.id}">✕</button>
-                </div>
-            `;
-        }).join('');
+        thoughtsContainer.innerHTML = thoughts.map(t => `
+            <div class="thought-card">
+                <strong>${escapeHTML(t.author)}</strong>
+                <p>${escapeHTML(t.content)}</p>
+                <div class="thought-timestamp">🕒 ${formatDate(t.timestamp)}</div>
+                <button class="delete-thought-btn" data-id="${t.id}">✕</button>
+            </div>
+        `).join('');
     } catch (err) {
         console.error(err);
         thoughtsContainer.innerHTML = `<p>Алдаа гарлаа: ${escapeHTML(err.message)}</p>`;

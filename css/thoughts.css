@@ -198,18 +198,28 @@ nav a.active {
   border-left: 4px solid #ff80ab;
 }
 
-/* Thought Header */
 .thought-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .thought-author {
-  font-weight: bold;
+  font-weight: 600;
+  font-size: 1.1rem;
   color: #ffd166;
 }
+.thought-timestamp {
+  margin-top: 10px;
+  font-size: 0.9rem;
+  color: #bbb;
+  font-style: italic;
+  opacity: 0.9;
+}
+
 
 .thought-date {
   font-size: 0.85rem;
