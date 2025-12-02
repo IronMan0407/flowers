@@ -43,13 +43,23 @@ async function loadThoughts() {
             return;
         }
 
-        thoughtsContainer.innerHTML = thoughts.map(t => `
-            <div class="thought-card">
-                <strong>${escapeHTML(t.author)}</strong>
-                <p>${escapeHTML(t.content)}</p>
-                <button class="delete-thought-btn" data-id="${t.id}">✕</button>
-            </div>
-        `).join('');
+        thoughtsContainer.innerHTML = thoughts.map(t => {
+            const timestamp = new Date(t.created_at).toLocaleString('mn-MN', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            return `
+                <div class="thought-card">
+                    <strong>${escapeHTML(t.author)}</strong>
+                    <p>${escapeHTML(t.content)}</p>
+                    <small>${timestamp}</small>
+                    <button class="delete-thought-btn" data-id="${t.id}">✕</button>
+                </div>
+            `;
+        }).join('');
     } catch (err) {
         console.error(err);
         thoughtsContainer.innerHTML = `<p>Алдаа гарлаа: ${escapeHTML(err.message)}</p>`;
