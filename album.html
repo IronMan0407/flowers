@@ -6,253 +6,144 @@
     <title>Бидний дурсамж ❤️</title>
     <link rel="stylesheet" href="css/album.css" />
     <link rel="icon" href="img/flowers.png" type="image/x-icon" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
   </head>
-
   <body>
+
+    <!-- Grain overlay -->
+    <div class="grain"></div>
+
     <header>
-      <h1>Бидний хамтын аялал 💕</h1>
-      <nav>
-        <a href="index.html">Нүүр</a>
-        <a href="flower.html">Flowers</a>
-        <a href="album.html" class="active">Албум</a>
-        <a href="thoughts.html">Note</a>
-      </nav>
+      <div class="header-inner">
+        <div class="header-title">
+          <span class="header-eyebrow">our story</span>
+          <h1>Бидний хамтын аялал <span class="heart">💕</span></h1>
+        </div>
+        <nav>
+          <a href="index.html">Нүүр</a>
+          <a href="flower.html">Flowers</a>
+          <a href="album.html" class="active">Албум</a>
+          <a href="thoughts.html">Note</a>
+        </nav>
+      </div>
     </header>
 
     <main class="album">
-      <section class="upload-section">
-        <h2>Шинэ зураг нэмэх 📸</h2>
-        <form id="uploadForm" enctype="multipart/form-data">
-          <div class="form-group">
-            <label for="photoInput">Зураг сонгох:</label>
-            <input type="file" id="photoInput" name="photo" accept="image/*" required />
-          </div>
-          <div class="form-group">
-            <label for="commentInput">Тайлбар нэмэх:</label>
-            <textarea id="commentInput" rows="3" placeholder="Энэ зургийн тухай бичих..."></textarea>
-          </div>
-          <button type="button" id="uploadBtn" class="upload-btn">📤 Оруулах</button>
-        </form>
+
+      <!-- Upload Section -->
+      <section class="upload-section" id="uploadSection">
+        <button class="upload-toggle" id="uploadToggle">
+          <span class="toggle-icon">＋</span>
+          <span>Шинэ зураг нэмэх</span>
+        </button>
+
+        <div class="upload-form-wrap" id="uploadFormWrap">
+          <form id="uploadForm" enctype="multipart/form-data">
+            <div class="drop-zone" id="dropZone">
+              <input type="file" id="photoInput" name="photo" accept="image/*" required />
+              <div class="drop-zone-inner">
+                <div class="drop-icon">📷</div>
+                <p class="drop-text">Зураг чирж оруулах эсвэл <span>сонгох</span></p>
+                <p class="drop-hint">JPG, PNG, HEIC дэмжигдэнэ</p>
+              </div>
+              <div class="preview-wrap" id="previewWrap" style="display:none">
+                <img id="previewImg" src="" alt="preview" />
+                <button type="button" class="remove-preview" id="removePreview">✕</button>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="commentInput">Тайлбар</label>
+              <textarea id="commentInput" rows="2" placeholder="Энэ мөчийн тухай бичих..."></textarea>
+            </div>
+            <button type="button" id="uploadBtn" class="upload-btn">
+              <span class="btn-text">📤 Оруулах</span>
+            </button>
+          </form>
+        </div>
       </section>
 
-      <section class="static-memories">
-        <h2>Бидний хамтын мөчүүд 💖</h2>
-        <div id="memoriesContainer"></div>
+      <!-- Uploaded memories grid -->
+      <section class="memories-section" id="uploadedSection">
+        <div class="section-label">
+          <span>Шинэ дурсамжууд</span>
+          <div class="label-line"></div>
+        </div>
+        <div class="masonry-grid" id="memoriesContainer"></div>
+      </section>
 
-        <div class="memory">
-          <h3>Бидний видео</h3>
-          <video controls>
-            <source src="img/32.MP4" type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
-          <p></p>
+      <!-- Static memories -->
+      <section class="memories-section static-memories">
+        <div class="section-label">
+          <span>Бидний хамтын мөчүүд 💖</span>
+          <div class="label-line"></div>
         </div>
 
-        <div class="memory">
-          <h3>Үхэн үхтлээ хадгалж явах зураг</h3>
-          <img src="img/21.JPG" alt="Photo booth" />
-          <p></p>
-        </div>
+        <div class="masonry-grid" id="staticGrid">
 
-        <div class="memory">
-          <h3>Миний хамгийн дуртай зураг</h3>
-          <img src="img/8.JPG" alt="In pizza hut" />
-          <p></p>
-        </div>
+          <div class="memory-card featured">
+            <div class="card-media">
+              <video controls>
+                <source src="img/32.MP4" type="video/mp4" />
+              </video>
+            </div>
+            <div class="card-caption">Бидний видео</div>
+          </div>
 
-        <div class="memory">
-          <img src="img/2.JPG" alt="Trip photo" />
-          <p></p>
-        </div>
+          <div class="memory-card featured">
+            <div class="card-media"><img src="img/21.JPG" alt="Photo booth" loading="lazy" /></div>
+            <div class="card-caption">Үхэн үхтлээ хадгалж явах зураг</div>
+          </div>
 
-        <div class="memory">
-          <img src="img/33.JPG" alt="In car" />
-          <p></p>
-        </div>
+          <div class="memory-card featured">
+            <div class="card-media"><img src="img/8.JPG" alt="In pizza hut" loading="lazy" /></div>
+            <div class="card-caption">Миний хамгийн дуртай зураг</div>
+          </div>
 
-        <div class="memory">
-          <img src="img/35.JPG" alt="In car" />
-          <p></p>
-        </div>
+          <div class="memory-card"><div class="card-media"><img src="img/2.JPG" loading="lazy" alt="" /></div></div>
+          <div class="memory-card"><div class="card-media"><img src="img/33.JPG" loading="lazy" alt="" /></div></div>
+          <div class="memory-card"><div class="card-media"><img src="img/35.JPG" loading="lazy" alt="" /></div></div>
+          <div class="memory-card"><div class="card-media"><img src="img/4.JPG" loading="lazy" alt="" /></div></div>
+          <div class="memory-card"><div class="card-media"><img src="img/5.JPG" loading="lazy" alt="" /></div></div>
+          <div class="memory-card"><div class="card-media"><img src="img/6.JPG" loading="lazy" alt="" /></div></div>
+          <div class="memory-card"><div class="card-media"><img src="img/34.JPG" loading="lazy" alt="" /></div></div>
+          <div class="memory-card"><div class="card-media"><img src="img/36.JPG" loading="lazy" alt="" /></div></div>
+          <div class="memory-card"><div class="card-media"><img src="img/38.JPG" loading="lazy" alt="" /></div></div>
+          <div class="memory-card"><div class="card-media"><img src="img/39.JPG" loading="lazy" alt="" /></div></div>
+          <div class="memory-card"><div class="card-media"><img src="img/salaavch.JPG" loading="lazy" alt="" /></div></div>
+          <div class="memory-card"><div class="card-media"><img src="img/7.JPG" loading="lazy" alt="" /></div></div>
+          <div class="memory-card"><div class="card-media"><img src="img/9.jpg" loading="lazy" alt="" /></div></div>
+          <div class="memory-card"><div class="card-media"><img src="img/10.JPG" loading="lazy" alt="" /></div></div>
+          <div class="memory-card"><div class="card-media"><img src="img/12.jpg" loading="lazy" alt="" /></div></div>
+          <div class="memory-card"><div class="card-media"><img src="img/13.jpg" loading="lazy" alt="" /></div></div>
+          <div class="memory-card"><div class="card-media"><img src="img/14.jpg" loading="lazy" alt="" /></div></div>
+          <div class="memory-card"><div class="card-media"><img src="img/15.jpg" loading="lazy" alt="" /></div></div>
+          <div class="memory-card"><div class="card-media"><img src="img/16.jpg" loading="lazy" alt="" /></div></div>
+          <div class="memory-card"><div class="card-media"><img src="img/17.jpg" loading="lazy" alt="" /></div></div>
+          <div class="memory-card"><div class="card-media"><img src="img/18.jpg" loading="lazy" alt="" /></div></div>
+          <div class="memory-card"><div class="card-media"><img src="img/19.jpg" loading="lazy" alt="" /></div></div>
+          <div class="memory-card"><div class="card-media"><img src="img/11.JPG" loading="lazy" alt="" /></div></div>
+          <div class="memory-card"><div class="card-media"><img src="img/20.JPG" loading="lazy" alt="" /></div></div>
+          <div class="memory-card"><div class="card-media"><img src="img/22.JPG" loading="lazy" alt="" /></div></div>
+          <div class="memory-card"><div class="card-media"><img src="img/23.JPG" loading="lazy" alt="" /></div></div>
+          <div class="memory-card"><div class="card-media"><img src="img/3.JPG" loading="lazy" alt="" /></div><div class="card-caption">🥰</div></div>
+          <div class="memory-card"><div class="card-media"><img src="img/24.JPG" loading="lazy" alt="" /></div></div>
+          <div class="memory-card"><div class="card-media"><img src="img/27.JPG" loading="lazy" alt="" /></div></div>
+          <div class="memory-card"><div class="card-media"><img src="img/28.JPG" loading="lazy" alt="" /></div></div>
+          <div class="memory-card"><div class="card-media"><img src="img/25.JPG" loading="lazy" alt="" /></div></div>
+          <div class="memory-card"><div class="card-media"><img src="img/29.jpg" loading="lazy" alt="" /></div></div>
+          <div class="memory-card"><div class="card-media"><img src="img/26.JPG" loading="lazy" alt="" /></div></div>
+          <div class="memory-card"><div class="card-media"><img src="img/30.JPG" loading="lazy" alt="" /></div></div>
+          <div class="memory-card"><div class="card-media"><img src="img/31.JPG" loading="lazy" alt="" /></div></div>
+          <div class="memory-card"><div class="card-media"><img src="img/40.PNG" loading="lazy" alt="" /></div></div>
+          <div class="memory-card"><div class="card-media"><img src="img/41.PNG" loading="lazy" alt="" /></div></div>
+          <div class="memory-card"><div class="card-media"><img src="img/42.PNG" loading="lazy" alt="" /></div></div>
 
-        <div class="memory">
-          <img src="img/4.JPG" alt="On her birthday" />
-          <p></p>
-        </div>
+          <div class="memory-card last-photo">
+            <div class="card-media"><img src="img/1.JPG" loading="lazy" alt="Last photo" /></div>
+            <div class="card-caption">Магадгүй бидний хамтдаа авхуулсан сүүлчийн зураг 💔</div>
+          </div>
 
-        <div class="memory">
-          <img src="img/5.JPG" alt="True beauty" />
-          <p></p>
-        </div>
-
-        <div class="memory">
-          <img src="img/6.JPG" alt="True beauty" />
-          <p></p>
-        </div>
-
-        <div class="memory">
-          <img src="img/34.JPG" alt="Little Oyu" />
-          <p></p>
-        </div>
-
-        <div class="memory">
-          <img src="img/36.JPG" alt="Little oyu" />
-          <p></p>
-        </div>
-
-        <div class="memory">
-          <img src="img/38.JPG" alt="Oyu in Pool" />
-          <p></p>
-        </div>
-
-        <div class="memory">
-          <img src="img/39.JPG" alt="in USA" />
-          <p></p>
-        </div>
-
-        <div class="memory">
-          <img src="img/salaavch.JPG" alt="Salaavch in car" />
-          <p></p>
-        </div>
-
-        <div class="memory">
-          <img src="img/7.JPG" alt="Salaavch in Pizzahut" />
-          <p></p>
-        </div>
-
-        <div class="memory">
-          <img src="img/9.jpg" alt="Choking in PH" />
-          <p></p>
-        </div>
-
-        <div class="memory">
-          <img src="img/10.JPG" alt="Choking in PH" />
-          <p></p>
-        </div>
-
-        <div class="memory">
-          <img src="img/12.jpg" alt="In car" />
-          <p></p>
-        </div>
-
-        <div class="memory">
-          <img src="img/13.jpg" alt="In car" />
-          <p></p>
-        </div>
-
-        <div class="memory">
-          <img src="img/14.jpg" alt="In car" />
-          <p></p>
-        </div>
-
-        <div class="memory">
-          <img src="img/15.jpg" alt="In car" />
-          <p></p>
-        </div>
-
-        <div class="memory">
-          <img src="img/16.jpg" alt="In car" />
-          <p></p>
-        </div>
-
-        <div class="memory">
-          <img src="img/17.jpg" alt="In car" />
-          <p></p>
-        </div>
-
-        <div class="memory">
-          <img src="img/18.jpg" alt="In car" />
-          <p></p>
-        </div>
-
-        <div class="memory">
-          <img src="img/19.jpg" alt="In car" />
-          <p></p>
-        </div>
-
-        <div class="memory">
-          <img src="img/11.JPG" alt="at Misheel expo park" />
-          <p></p>
-        </div>
-
-        <div class="memory">
-          <img src="img/20.JPG" alt="At Bogd Uul" />
-          <p></p>
-        </div>
-
-        <div class="memory">
-          <img src="img/22.JPG" alt="At park" />
-          <p></p>
-        </div>
-
-        <div class="memory">
-          <img src="img/23.JPG" alt="At park" />
-          <p></p>
-        </div>
-
-        <div class="memory">
-          <img src="img/3.JPG" alt="at KH Apartment" />
-          <p>🥰</p>
-        </div>
-
-        <div class="memory">
-          <img src="img/24.JPG" alt="at KH Apartment" />
-          <p></p>
-        </div>
-
-        <div class="memory">
-          <img src="img/27.JPG" alt="at KH Apartment" />
-          <p></p>
-        </div>
-
-        <div class="memory">
-          <img src="img/28.JPG" alt="at KH Apartment's cu" />
-          <p></p>
-        </div>
-
-        <div class="memory">
-          <img src="img/25.JPG" alt="At my home first time" />
-          <p></p>
-        </div>
-
-        <div class="memory">
-          <img src="img/29.jpg" alt="True beauty" />
-          <p></p>
-        </div>
-
-        <div class="memory">
-          <img src="img/26.JPG" alt="first meal she made" />
-          <p></p>
-        </div>
-
-        <div class="memory">
-          <img src="img/30.JPG" alt="Last meal we ate" />
-          <p></p>
-        </div>
-
-        <div class="memory">
-          <img src="img/31.JPG" alt="So cute" />
-          <p></p>
-        </div>
-
-        <div class="memory">
-          <img src="img/40.PNG" alt="Checklist" />
-          <p></p>
-        </div>
-
-        <div class="memory">
-          <img src="img/41.PNG" alt="Note she write" />
-          <p></p>
-        </div>
-
-        <div class="memory">
-          <img src="img/42.PNG" alt="Note she write" />
-          <p></p>
-        </div>
-
-        <div class="memory">
-          <img src="img/1.JPG" alt="Last photo we took together" />
-          <p>Магадгүй бидний хамтдаа авхуулсан сүүлчийн зураг 💔</p>
         </div>
       </section>
     </main>
@@ -260,6 +151,20 @@
     <footer>
       <p>Зөвхөн Оюундарь-т ❤️</p>
     </footer>
+
+    <!-- Lightbox -->
+    <div class="lightbox" id="lightbox">
+      <button class="lightbox-close" id="lightboxClose">✕</button>
+      <button class="lightbox-nav prev" id="lbPrev">‹</button>
+      <div class="lightbox-content">
+        <img id="lightboxImg" src="" alt="" />
+        <p class="lightbox-caption" id="lightboxCaption"></p>
+      </div>
+      <button class="lightbox-nav next" id="lbNext">›</button>
+    </div>
+
+    <!-- Scroll to top -->
+    <button class="scroll-to-top" id="scrollTop">↑</button>
 
     <script type="module" src="js/album.js"></script>
   </body>
