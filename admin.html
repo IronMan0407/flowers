@@ -1,130 +1,424 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
-    <title>Admin - All Memories</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            padding: 20px;
-            background: #f5f5f5;
+        :root {
+            --bg: #0c0c0f;
+            --surface: #13131a;
+            --surface2: #1c1c27;
+            --border: rgba(255,255,255,0.07);
+            --accent: #7c6af7;
+            --accent2: #f76a8b;
+            --accent3: #6af7c8;
+            --text: #e8e8f0;
+            --muted: #6b6b80;
+            --active: #6af7c8;
+            --deleted: #f76a8b;
         }
 
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Syne', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        /* Header */
         .header {
-            background: #333;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 40px;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .admin-badge {
+            background: var(--accent);
             color: white;
-            padding: 20px;
-            margin: -20px -20px 20px -20px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            padding: 4px 10px;
+            border-radius: 4px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
         }
 
         .header h1 {
-            margin: 0;
+            font-size: 1.3rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
         }
 
-        .header a {
-            color: #4CAF50;
+        .header-links {
+            display: flex;
+            gap: 12px;
+        }
+
+        .header-links a {
+            color: var(--muted);
             text-decoration: none;
+            font-size: 0.85rem;
+            padding: 6px 14px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .header-links a:hover {
+            color: var(--text);
+            border-color: var(--accent);
+        }
+
+        /* Stats bar */
+        .stats-bar {
+            display: flex;
+            gap: 1px;
+            padding: 0 40px;
+            background: var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .stat-pill {
+            background: var(--surface);
+            padding: 14px 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+        }
+
+        .stat-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+        }
+
+        .stat-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .stat-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-left: auto;
+        }
+
+        /* Tab nav */
+        .tab-nav {
+            display: flex;
+            gap: 0;
+            padding: 30px 40px 0;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            border-bottom: 2px solid transparent;
+            color: var(--muted);
+            font-family: 'Syne', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            letter-spacing: 0.02em;
+        }
+
+        .tab-btn.active {
+            color: var(--text);
+            border-bottom-color: var(--accent);
+        }
+
+        .tab-btn:hover:not(.active) {
+            color: var(--text);
+        }
+
+        /* Content */
+        .content {
+            padding: 30px 40px;
+        }
+
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; }
+
+        /* Table */
+        .table-wrap {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .table-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .table-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .filter-btns {
+            display: flex;
+            gap: 6px;
+        }
+
+        .filter-btn {
+            background: none;
+            border: 1px solid var(--border);
+            color: var(--muted);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.72rem;
+            padding: 5px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        .filter-btn.active, .filter-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            background: white;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        th,
-        td {
-            padding: 12px;
-            border: 1px solid #ddd;
-            text-align: left;
         }
 
         th {
-            background: #333;
-            color: white;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.72rem;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            padding: 12px 20px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+            font-weight: 600;
         }
 
-        .active {
-            color: green;
-            font-weight: bold;
+        td {
+            padding: 14px 20px;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.9rem;
+            vertical-align: middle;
         }
 
-        .deleted {
-            color: red;
-            font-weight: bold;
+        tr:last-child td { border-bottom: none; }
+
+        tr:hover td { background: rgba(255,255,255,0.02); }
+
+        .id-cell {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.78rem;
+            color: var(--muted);
         }
 
-        img {
-            max-width: 100px;
-            height: auto;
-            border-radius: 5px;
-        }
-
-        .restore-btn {
-            background: #4CAF50;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            cursor: pointer;
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.72rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            padding: 4px 10px;
             border-radius: 4px;
         }
 
-        .restore-btn:hover {
-            background: #45a049;
+        .status-badge.active {
+            background: rgba(106, 247, 200, 0.1);
+            color: var(--active);
+            border: 1px solid rgba(106, 247, 200, 0.2);
         }
 
-        .no-data {
+        .status-badge.deleted {
+            background: rgba(247, 106, 139, 0.1);
+            color: var(--deleted);
+            border: 1px solid rgba(247, 106, 139, 0.2);
+        }
+
+        .status-dot {
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        .thumb {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+        }
+
+        .content-cell {
+            max-width: 320px;
+            color: #bbbbc8;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+
+        .author-cell {
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: var(--accent);
+        }
+
+        .date-cell {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--muted);
+            white-space: nowrap;
+        }
+
+        .action-btn {
+            border: none;
+            padding: 6px 14px;
+            border-radius: 5px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.72rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        .restore-btn {
+            background: rgba(106, 247, 200, 0.1);
+            color: var(--active);
+            border: 1px solid rgba(106, 247, 200, 0.3);
+        }
+
+        .restore-btn:hover {
+            background: rgba(106, 247, 200, 0.2);
+        }
+
+        .loading-row td {
             text-align: center;
             padding: 40px;
-            color: #999;
+            color: var(--muted);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--muted);
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .header, .stats-bar, .tab-nav, .content { padding-left: 20px; padding-right: 20px; }
+            .stats-bar { flex-wrap: wrap; }
+            th, td { padding: 10px 12px; }
         }
     </style>
 </head>
-
 <body>
-    <div class="header">
-        <h1>Admin Panel - All Memories</h1>
-        <a href="album.html">← Back to Album</a>
+
+<div class="header">
+    <div class="header-left">
+        <span class="admin-badge">Admin</span>
+        <h1>Control Panel</h1>
     </div>
+    <div class="header-links">
+        <a href="album.html">← Album</a>
+        <a href="thoughts.html">← Notes</a>
+        <a href="index.html">← Home</a>
+    </div>
+</div>
 
-    <section id="admin-memories">
-        <p>Loading memories...</p>
-    </section>
+<div class="stats-bar">
+    <div class="stat-pill">
+        <span class="stat-dot" style="background:#7c6af7"></span>
+        <span class="stat-label">Total Memories</span>
+        <span class="stat-value" id="stat-total-mem">—</span>
+    </div>
+    <div class="stat-pill">
+        <span class="stat-dot" style="background:#6af7c8"></span>
+        <span class="stat-label">Active Memories</span>
+        <span class="stat-value" id="stat-active-mem">—</span>
+    </div>
+    <div class="stat-pill">
+        <span class="stat-dot" style="background:#f76a8b"></span>
+        <span class="stat-label">Hidden Memories</span>
+        <span class="stat-value" id="stat-deleted-mem">—</span>
+    </div>
+    <div class="stat-pill">
+        <span class="stat-dot" style="background:#f7d76a"></span>
+        <span class="stat-label">Total Thoughts</span>
+        <span class="stat-value" id="stat-total-th">—</span>
+    </div>
+    <div class="stat-pill">
+        <span class="stat-dot" style="background:#6af7c8"></span>
+        <span class="stat-label">Active Thoughts</span>
+        <span class="stat-value" id="stat-active-th">—</span>
+    </div>
+    <div class="stat-pill">
+        <span class="stat-dot" style="background:#f76a8b"></span>
+        <span class="stat-label">Hidden Thoughts</span>
+        <span class="stat-value" id="stat-deleted-th">—</span>
+    </div>
+</div>
 
-    <!-- Load Supabase as ES module -->
-    <script type="module">
-        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+<div class="tab-nav">
+    <button class="tab-btn active" data-tab="memories">📸 Memories</button>
+    <button class="tab-btn" data-tab="thoughts">💭 Thoughts</button>
+</div>
 
-        const SUPABASE_URL = 'https://uvzrvsskeeqiincskydx.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV2enJ2c3NrZWVxaWluY3NreWR4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMzNDI3MjMsImV4cCI6MjA3ODkxODcyM30.5xXIx2KA2iDufVAqfG4q0_CG9-L7gLnxGplPzLWS5aU';
+<div class="content">
 
-        const supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
-
-        const adminSection = document.getElementById('admin-memories')
-
-        async function fetchMemories() {
-            try {
-                const { data: memories, error } = await supabase
-                    .from('oyu_memories')
-                    .select('*')
-                    .order('timestamp', { ascending: false });
-
-                if (error) throw error
-
-                if (!memories.length) {
-                    adminSection.innerHTML = `
-                        <div class="no-data">
-                            <p>No memories found. Upload some images first!</p>
-                            <a href="album.html">Go to Album</a>
-                        </div>
-                    `;
-                    return;
-                }
-
-                let html = `
-                    <table>
+    <!-- MEMORIES TAB -->
+    <div class="tab-panel active" id="tab-memories">
+        <div class="table-wrap">
+            <div class="table-toolbar">
+                <span class="table-title">oyu_memories</span>
+                <div class="filter-btns">
+                    <button class="filter-btn active" data-filter="all" data-table="memories">All</button>
+                    <button class="filter-btn" data-filter="active" data-table="memories">Active</button>
+                    <button class="filter-btn" data-filter="deleted" data-table="memories">Hidden</button>
+                </div>
+            </div>
+            <table>
+                <thead>
                     <tr>
                         <th>ID</th>
                         <th>Image</th>
@@ -133,58 +427,207 @@
                         <th>Timestamp</th>
                         <th>Action</th>
                     </tr>
-                `;
+                </thead>
+                <tbody id="memories-tbody">
+                    <tr class="loading-row"><td colspan="6">Loading memories...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 
-                memories.forEach(mem => {
-                    html += `
-                        <tr>
-                            <td>${mem.id}</td>
-                            <td><img src="${SUPABASE_URL}/storage/v1/object/public/memories/${mem.url}" alt="Memory"></td>
-                            <td>${mem.comment || ''}</td>
-                            <td class="${mem.status == 1 ? 'active' : 'deleted'}">
-                                ${mem.status == 1 ? 'Active' : 'Deleted'}
-                            </td>
-                            <td>${new Date(mem.timestamp).toLocaleString()}</td>
-                            <td>
-                                ${mem.status == 0 ? `<button class="restore-btn" onclick="restore(${mem.id})">Restore</button>` : ''}
-                            </td>
-                        </tr>
-                    `;
-                });
+    <!-- THOUGHTS TAB -->
+    <div class="tab-panel" id="tab-thoughts">
+        <div class="table-wrap">
+            <div class="table-toolbar">
+                <span class="table-title">thoughts</span>
+                <div class="filter-btns">
+                    <button class="filter-btn active" data-filter="all" data-table="thoughts">All</button>
+                    <button class="filter-btn" data-filter="active" data-table="thoughts">Active</button>
+                    <button class="filter-btn" data-filter="deleted" data-table="thoughts">Hidden</button>
+                </div>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Author</th>
+                        <th>Content</th>
+                        <th>Status</th>
+                        <th>Timestamp</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="thoughts-tbody">
+                    <tr class="loading-row"><td colspan="6">Loading thoughts...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 
-                html += `</table>`;
-                adminSection.innerHTML = html;
+</div>
 
-            } catch (err) {
-                adminSection.innerHTML = `<p style="color:red;">Error loading memories: ${err.message}</p>`;
-                console.error(err)
-            }
+<script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+    const SUPABASE_URL = 'https://uvzrvsskeeqiincskydx.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV2enJ2c3NrZWVxaWluY3NreWR4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMzNDI3MjMsImV4cCI6MjA3ODkxODcyM30.5xXIx2KA2iDufVAqfG4q0_CG9-L7gLnxGplPzLWS5aU';
+    const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    const FILTERS = { memories: 'all', thoughts: 'all' };
+    let DATA = { memories: [], thoughts: [] };
+
+    function escapeHTML(str) {
+        if (!str) return '';
+        return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    function formatDate(ts) {
+        return new Date(ts).toLocaleString('mn-MN', {
+            year: 'numeric', month: 'short', day: 'numeric',
+            hour: '2-digit', minute: '2-digit'
+        });
+    }
+
+    function statusBadge(status) {
+        const isActive = status == 1;
+        return `<span class="status-badge ${isActive ? 'active' : 'deleted'}">
+            <span class="status-dot"></span>${isActive ? 'Active' : 'Hidden'}
+        </span>`;
+    }
+
+    // ---- Memories ----
+    async function fetchMemories() {
+        const { data, error } = await supabase
+            .from('oyu_memories')
+            .select('*')
+            .order('timestamp', { ascending: false });
+        if (error) throw error;
+        DATA.memories = data || [];
+        updateMemoryStats();
+        renderMemories();
+    }
+
+    function updateMemoryStats() {
+        const d = DATA.memories;
+        document.getElementById('stat-total-mem').textContent = d.length;
+        document.getElementById('stat-active-mem').textContent = d.filter(m => m.status == 1).length;
+        document.getElementById('stat-deleted-mem').textContent = d.filter(m => m.status == 0).length;
+    }
+
+    function renderMemories() {
+        const tbody = document.getElementById('memories-tbody');
+        const filter = FILTERS.memories;
+        let rows = DATA.memories;
+        if (filter === 'active') rows = rows.filter(m => m.status == 1);
+        if (filter === 'deleted') rows = rows.filter(m => m.status == 0);
+
+        if (!rows.length) {
+            tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state">No records found.</div></td></tr>`;
+            return;
         }
 
-        async function restore(id) {
-            if (!confirm('Restore this image?')) return;
+        tbody.innerHTML = rows.map(mem => `
+            <tr>
+                <td class="id-cell">#${mem.id}</td>
+                <td><img class="thumb" src="${SUPABASE_URL}/storage/v1/object/public/memories/${escapeHTML(mem.url)}" alt=""></td>
+                <td><div class="content-cell">${escapeHTML(mem.comment) || '<span style="color:var(--muted);font-style:italic">—</span>'}</div></td>
+                <td>${statusBadge(mem.status)}</td>
+                <td class="date-cell">${formatDate(mem.timestamp)}</td>
+                <td>
+                    ${mem.status == 0
+                        ? `<button class="action-btn restore-btn" onclick="window.restoreMemory(${mem.id})">Restore</button>`
+                        : '<span style="color:var(--muted);font-size:0.75rem">—</span>'}
+                </td>
+            </tr>
+        `).join('');
+    }
 
-            try {
-                const { data, error } = await supabase
-                    .from('oyu_memories')
-                    .update({ status: 1 })
-                    .eq('id', id);
+    window.restoreMemory = async function(id) {
+        if (!confirm('Restore this memory?')) return;
+        const { error } = await supabase.from('oyu_memories').update({ status: 1 }).eq('id', id);
+        if (error) return alert('Error: ' + error.message);
+        await fetchMemories();
+    };
 
-                if (error) throw error
+    // ---- Thoughts ----
+    async function fetchThoughts() {
+        const { data, error } = await supabase
+            .from('thoughts')
+            .select('*')
+            .order('timestamp', { ascending: false });
+        if (error) throw error;
+        DATA.thoughts = data || [];
+        updateThoughtStats();
+        renderThoughts();
+    }
 
-                alert('Restored successfully!')
-                fetchMemories()
-            } catch (err) {
-                alert('Error: ' + err.message)
-            }
+    function updateThoughtStats() {
+        const d = DATA.thoughts;
+        document.getElementById('stat-total-th').textContent = d.length;
+        document.getElementById('stat-active-th').textContent = d.filter(t => t.status == 1).length;
+        document.getElementById('stat-deleted-th').textContent = d.filter(t => t.status == 0).length;
+    }
+
+    function renderThoughts() {
+        const tbody = document.getElementById('thoughts-tbody');
+        const filter = FILTERS.thoughts;
+        let rows = DATA.thoughts;
+        if (filter === 'active') rows = rows.filter(t => t.status == 1);
+        if (filter === 'deleted') rows = rows.filter(t => t.status == 0);
+
+        if (!rows.length) {
+            tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state">No records found.</div></td></tr>`;
+            return;
         }
 
-        // Make restore function global (so onclick in HTML works)
-        window.restore = restore
+        tbody.innerHTML = rows.map(t => `
+            <tr>
+                <td class="id-cell">#${t.id}</td>
+                <td class="author-cell">${escapeHTML(t.author)}</td>
+                <td><div class="content-cell">${escapeHTML(t.content)}</div></td>
+                <td>${statusBadge(t.status)}</td>
+                <td class="date-cell">${formatDate(t.timestamp)}</td>
+                <td>
+                    ${t.status == 0
+                        ? `<button class="action-btn restore-btn" onclick="window.restoreThought(${t.id})">Restore</button>`
+                        : '<span style="color:var(--muted);font-size:0.75rem">—</span>'}
+                </td>
+            </tr>
+        `).join('');
+    }
 
-        // Initialize
-        fetchMemories()
-    </script>
+    window.restoreThought = async function(id) {
+        if (!confirm('Restore this thought?')) return;
+        const { error } = await supabase.from('thoughts').update({ status: 1 }).eq('id', id);
+        if (error) return alert('Error: ' + error.message);
+        await fetchThoughts();
+    };
+
+    // ---- Tabs ----
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById(`tab-${btn.dataset.tab}`).classList.add('active');
+        });
+    });
+
+    // ---- Filters ----
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const table = btn.dataset.table;
+            document.querySelectorAll(`.filter-btn[data-table="${table}"]`).forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            FILTERS[table] = btn.dataset.filter;
+            if (table === 'memories') renderMemories();
+            else renderThoughts();
+        });
+    });
+
+    // ---- Init ----
+    try { await fetchMemories(); } catch(e) { document.getElementById('memories-tbody').innerHTML = `<tr class="loading-row"><td colspan="6">Error: ${e.message}</td></tr>`; }
+    try { await fetchThoughts(); } catch(e) { document.getElementById('thoughts-tbody').innerHTML = `<tr class="loading-row"><td colspan="6">Error: ${e.message}</td></tr>`; }
+</script>
 </body>
-
 </html>
