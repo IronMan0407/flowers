@@ -111,7 +111,10 @@ if (thoughtForm) {
         btn.textContent = '⏳';
 
         try {
-            await supabaseFetch(`thoughts?id=eq.${id}`, { method: 'DELETE' });
+            await supabaseFetch(`thoughts?id=eq.${id}`, {
+                method: 'PATCH',
+                body: JSON.stringify({ status: 0 })
+            });
             btn.closest('.thought-card').remove();
         } catch (err) {
             console.error(err);
