@@ -365,6 +365,7 @@
     /* ===================== SCENE 3 — LETTER ===================== */
     #scene3 {
       padding: 40px 30px;
+      justify-content: flex-start;
       overflow-y: auto;
       -webkit-overflow-scrolling: touch;
     }
@@ -812,9 +813,14 @@ let currentScene = 1;
 const dots = document.querySelectorAll('.dot');
 
 function goTo(n) {
-  document.getElementById(`scene${currentScene}`).classList.remove('active');
+  const previousScene = document.getElementById(`scene${currentScene}`);
+  previousScene.classList.remove('active');
+  previousScene.scrollTop = 0;
+
   currentScene = n;
-  document.getElementById(`scene${n}`).classList.add('active');
+  const nextScene = document.getElementById(`scene${n}`);
+  nextScene.classList.add('active');
+  nextScene.scrollTop = 0;
   dots.forEach((d, i) => d.classList.toggle('active', i === n - 1));
 
   if (n === 2) burst();
