@@ -1534,3 +1534,9 @@ body {
     transition-duration: 0.01ms !important;
   }
 }
+.birthday-link {
+  background: linear-gradient(135deg, #e8728f, #f0c070) !important;
+  color: #111 !important;
+  font-weight: 600;
+  animation: pulse 2s ease-in-out infinite;
+}

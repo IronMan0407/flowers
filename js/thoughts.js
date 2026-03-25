@@ -5,6 +5,7 @@ const submitBtn = document.getElementById('submitBtn');
 const authorInput = document.getElementById('authorInput');
 const contentInput = document.getElementById('contentInput');
 const thoughtsContainer = document.getElementById('thoughtsContainer');
+const scrollTopBtn = document.getElementById('scrollTop');
 
 const maxChars = 5000;
 
@@ -45,26 +46,55 @@ function escapeHTML(str) {
               .replace(/'/g, "&#039;");
 }
 
+function getAuthorMeta(author) {
+    if (author === 'Оюундарь') {
+        return {
+            cardClass: 'author-oyu',
+            badge: 'oyu note'
+        };
+    }
+
+    return {
+        cardClass: 'author-ironman',
+        badge: 'ironman note'
+    };
+}
+
 // -------------------- Load Thoughts --------------------
 async function loadThoughts() {
     try {
         const thoughts = await supabaseFetch('thoughts?status=eq.1') || [];
         if (thoughts.length === 0) {
-            thoughtsContainer.innerHTML = '<p>Одоогоор бодол санаа байхгүй байна.</p>';
+            thoughtsContainer.innerHTML = `
+                <div class="no-thoughts">
+                    <strong>Одоохондоо note алга байна</strong>
+                    <p>Эхний бодлоо үлдээгээд энэ хуудсыг амилуулаарай.</p>
+                </div>
+            `;
             return;
         }
 
         thoughtsContainer.innerHTML = thoughts.map(t => `
-            <div class="thought-card">
-                <strong>${escapeHTML(t.author)}</strong>
-                <p>${escapeHTML(t.content)}</p>
-                <div class="thought-timestamp">🕒 ${formatDate(t.timestamp)}</div>
+            <article class="thought-card ${getAuthorMeta(t.author).cardClass}">
+                <div class="thought-header">
+                    <div class="thought-author-wrap">
+                        <strong class="thought-author">${escapeHTML(t.author)}</strong>
+                        <span class="thought-badge">${getAuthorMeta(t.author).badge}</span>
+                    </div>
+                    <div class="thought-timestamp">🕒 ${formatDate(t.timestamp)}</div>
+                </div>
+                <p class="thought-content">${escapeHTML(t.content)}</p>
                 <button class="delete-thought-btn" data-id="${t.id}">✕</button>
-            </div>
+            </article>
         `).join('');
     } catch (err) {
         console.error(err);
-        thoughtsContainer.innerHTML = `<p>Алдаа гарлаа: ${escapeHTML(err.message)}</p>`;
+        thoughtsContainer.innerHTML = `
+            <div class="no-thoughts">
+                <strong>Алдаа гарлаа</strong>
+                <p>${escapeHTML(err.message)}</p>
+            </div>
+        `;
     }
 }
 
@@ -127,3 +157,13 @@ if (thoughtForm) {
 
 // -------------------- Initial Load --------------------
 loadThoughts();
+
+if (scrollTopBtn) {
+    window.addEventListener('scroll', () => {
+        scrollTopBtn.style.display = window.scrollY > 320 ? 'flex' : 'none';
+    });
+
+    scrollTopBtn.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+}

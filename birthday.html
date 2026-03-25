@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Чамдаа төрсөн өдрийн мэнд хүргэе 🌸</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --rose:    #e8728f;
+      --rose-l:  #f4b8c8;
+      --gold:    #f0c070;
+      --cream:   #fff6f0;
+      --deep:    #0d0608;
+      --mid:     #1c1018;
+    }
+
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+    html, body {
+      width: 100%; height: 100%;
+      background: var(--deep);
+      color: var(--cream);
+      font-family: 'Montserrat', sans-serif;
+      overflow: hidden;
+      cursor: default;
+    }
+
+    .top-nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 300;
+      display: flex;
+      justify-content: center;
+      padding: 18px 20px 0;
+      pointer-events: none;
+    }
+
+    .top-nav-inner {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: center;
+      padding: 10px 12px;
+      border-radius: 999px;
+      background: rgba(13, 6, 8, 0.56);
+      border: 1px solid rgba(255,255,255,0.08);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      box-shadow: 0 14px 40px rgba(0,0,0,0.28);
+      pointer-events: auto;
+    }
+
+    .top-nav a {
+      color: rgba(255,246,240,0.72);
+      text-decoration: none;
+      font-size: 0.82rem;
+      letter-spacing: 0.04em;
+      padding: 8px 14px;
+      border-radius: 999px;
+      transition: all 0.25s ease;
+    }
+
+    .top-nav a:hover {
+      color: var(--cream);
+      background: rgba(255,255,255,0.07);
+    }
+
+    .top-nav a.active {
+      color: #111;
+      background: linear-gradient(135deg, var(--rose), var(--gold));
+      font-weight: 600;
+    }
+
+    /* ===================== SCENES ===================== */
+    .scene {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.9s ease;
+      z-index: 1;
+      padding-top: 88px;
+    }
+    .scene.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    /* ===================== CANVAS ===================== */
+    #starCanvas {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+    }
+
+    /* ===================== SCENE 1 — INTRO ===================== */
+    #scene1 { text-align: center; padding: 30px; }
+
+    .envelope-wrap {
+      position: relative;
+      cursor: pointer;
+      margin-bottom: 40px;
+      animation: floatY 3s ease-in-out infinite;
+    }
+
+    .envelope {
+      width: 180px;
+      height: 120px;
+      background: linear-gradient(135deg, #c0506e, #8a2040);
+      border-radius: 8px;
+      position: relative;
+      box-shadow: 0 20px 60px rgba(232,114,143,0.4), 0 0 0 1px rgba(255,255,255,0.08);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .envelope:hover {
+      transform: scale(1.06);
+      box-shadow: 0 30px 80px rgba(232,114,143,0.6), 0 0 0 1px rgba(255,255,255,0.15);
+    }
+
+    /* envelope flap */
+    .envelope::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 0; height: 0;
+      border-left: 90px solid transparent;
+      border-right: 90px solid transparent;
+      border-top: 64px solid #a03050;
+      transition: transform 0.5s ease;
+    }
+
+    .envelope.open::before {
+      transform: rotateX(180deg);
+      transform-origin: top center;
+    }
+
+    /* envelope bottom triangle */
+    .envelope::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0;
+      width: 0; height: 0;
+      border-left: 90px solid transparent;
+      border-right: 90px solid transparent;
+      border-bottom: 60px solid #7a1838;
+    }
+
+    .env-left, .env-right {
+      position: absolute;
+      bottom: 0;
+      width: 0; height: 0;
+    }
+    .env-left {
+      left: 0;
+      border-bottom: 60px solid #b04060;
+      border-right: 90px solid transparent;
+    }
+    .env-right {
+      right: 0;
+      border-bottom: 60px solid #b04060;
+      border-left: 90px solid transparent;
+    }
+
+    .env-heart {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 2rem;
+      z-index: 2;
+      animation: heartbeat 1.5s ease-in-out infinite;
+    }
+
+    .envelope-hint {
+      position: absolute;
+      bottom: -32px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.35);
+      white-space: nowrap;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    .intro-subtitle {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1rem, 3vw, 1.3rem);
+      font-style: italic;
+      color: rgba(255,246,240,0.5);
+      letter-spacing: 0.05em;
+      animation: fadeIn 2s ease 1s both;
+    }
+
+    /* ===================== SCENE 2 — BIRTHDAY ===================== */
+    #scene2 { text-align: center; padding: 30px; }
+
+    .bday-eyebrow {
+      font-size: 0.7rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 16px;
+      opacity: 0;
+      animation: fadeUp 0.7s ease 0.2s forwards;
+    }
+
+    .bday-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(3.5rem, 12vw, 8rem);
+      font-weight: 300;
+      line-height: 0.9;
+      letter-spacing: 0.04em;
+      color: var(--cream);
+      text-shadow: 0 0 60px rgba(240,192,112,0.3);
+      opacity: 0;
+      animation: fadeUp 0.8s ease 0.5s forwards;
+    }
+
+    .bday-name em {
+      font-style: italic;
+      color: var(--rose-l);
+      display: block;
+    }
+
+    .bday-wish {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.1rem, 3.5vw, 1.7rem);
+      font-style: italic;
+      font-weight: 300;
+      color: rgba(255,246,240,0.7);
+      margin-top: 20px;
+      max-width: 500px;
+      line-height: 1.7;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 0.9s forwards;
+    }
+
+    /* Cake */
+    .cake-wrap {
+      margin: 36px 0 28px;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 0.7s forwards;
+    }
+
+    .cake {
+      position: relative;
+      display: inline-block;
+    }
+
+    /* Candles */
+    .candles {
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+      margin-bottom: 4px;
+    }
+
+    .candle {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .flame {
+      width: 10px; height: 16px;
+      background: radial-gradient(ellipse at 50% 80%, #fff 0%, #ffdd44 40%, #ff8800 70%, transparent 100%);
+      border-radius: 50% 50% 30% 30%;
+      animation: flicker 0.4s ease-in-out infinite alternate;
+      filter: blur(0.5px);
+      margin-bottom: 2px;
+    }
+
+    .candle:nth-child(2) .flame { animation-delay: 0.15s; }
+    .candle:nth-child(3) .flame { animation-delay: 0.3s; }
+
+    .candle-body {
+      width: 8px; height: 28px;
+      border-radius: 4px;
+    }
+
+    .candle:nth-child(1) .candle-body { background: linear-gradient(#f4a7b9, #c0506e); }
+    .candle:nth-child(2) .candle-body { background: linear-gradient(#f0c070, #c08020); }
+    .candle:nth-child(3) .candle-body { background: linear-gradient(#a8d8ea, #4090c0); }
+
+    /* Cake layers */
+    .cake-top {
+      width: 140px; height: 44px;
+      background: linear-gradient(135deg, #f4c2cc, #e8728f);
+      border-radius: 70px 70px 0 0;
+      position: relative;
+      box-shadow: 0 -4px 12px rgba(232,114,143,0.3);
+    }
+
+    .cake-top::after {
+      content: '';
+      position: absolute;
+      top: 6px; left: 10px; right: 10px; height: 6px;
+      background: rgba(255,255,255,0.35);
+      border-radius: 50%;
+      filter: blur(3px);
+    }
+
+    .cake-mid {
+      width: 160px; height: 40px;
+      background: linear-gradient(135deg, #f9e4b7, #f0c070);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cake-mid::after {
+      content: '✦  ✦  ✦';
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%,-50%);
+      font-size: 0.6rem;
+      color: rgba(120,60,10,0.4);
+      letter-spacing: 0.2em;
+      white-space: nowrap;
+    }
+
+    .cake-bot {
+      width: 180px; height: 48px;
+      background: linear-gradient(135deg, #f4c2cc, #d05878);
+      border-radius: 0 0 16px 16px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cake-bot::after {
+      content: '♥ ♥ ♥ ♥ ♥';
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%,-50%);
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.3);
+      letter-spacing: 0.15em;
+      white-space: nowrap;
+    }
+
+    .cake-plate {
+      width: 200px; height: 12px;
+      background: linear-gradient(135deg, #e8e0d8, #c8beb5);
+      border-radius: 50%;
+      margin-top: 2px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.3);
+    }
+
+    .scene2-next {
+      margin-top: 36px;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 1.4s forwards;
+    }
+
+    /* ===================== SCENE 3 — LETTER ===================== */
+    #scene3 {
+      padding: 40px 30px;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .letter-wrap {
+      max-width: 580px;
+      width: 100%;
+      text-align: left;
+      opacity: 0;
+      animation: fadeUp 0.9s ease 0.3s forwards;
+    }
+
+    .letter-from {
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--rose);
+      margin-bottom: 28px;
+    }
+
+    .letter-body {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.05rem, 2.5vw, 1.25rem);
+      font-weight: 300;
+      line-height: 1.95;
+      color: rgba(255,246,240,0.88);
+    }
+
+    .letter-body p { margin-bottom: 20px; }
+
+    .letter-body .highlight {
+      color: var(--rose-l);
+      font-style: italic;
+    }
+
+    .letter-body .gold { color: var(--gold); }
+
+    .letter-sign {
+      margin-top: 36px;
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 1.2rem;
+      color: rgba(255,246,240,0.5);
+    }
+
+    .letter-sign strong {
+      display: block;
+      font-size: 1.5rem;
+      font-style: normal;
+      color: var(--rose-l);
+      margin-top: 6px;
+    }
+
+    /* ===================== SCENE 4 — FINALE ===================== */
+    #scene4 { text-align: center; padding: 30px; }
+
+    .finale-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2rem, 8vw, 5rem);
+      font-weight: 300;
+      line-height: 1.1;
+      opacity: 0;
+      animation: scaleIn 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.3s forwards;
+    }
+
+    .finale-text em {
+      font-style: italic;
+      color: var(--rose-l);
+    }
+
+    .hearts-burst {
+      font-size: 2.5rem;
+      margin: 20px 0;
+      opacity: 0;
+      animation: fadeIn 1s ease 1s forwards;
+      letter-spacing: 0.15em;
+    }
+
+    .finale-sub {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: clamp(1rem, 2.5vw, 1.3rem);
+      color: rgba(255,246,240,0.5);
+      max-width: 400px;
+      line-height: 1.6;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 1.4s forwards;
+    }
+
+    /* ===================== SHARED BUTTON ===================== */
+    .btn-next {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: none;
+      border: 1px solid rgba(232,114,143,0.4);
+      color: var(--rose-l);
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 13px 28px;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-next::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(232,114,143,0.15), rgba(240,192,112,0.1));
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .btn-next:hover {
+      border-color: var(--rose);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(232,114,143,0.25);
+    }
+
+    .btn-next:hover::before { opacity: 1; }
+
+    /* ===================== PROGRESS DOTS ===================== */
+    .progress {
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 8px;
+      z-index: 50;
+    }
+
+    .dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.2);
+      transition: all 0.3s ease;
+    }
+
+    .dot.active {
+      background: var(--rose);
+      transform: scale(1.4);
+    }
+
+    /* ===================== FLOATING PARTICLES ===================== */
+    .particle {
+      position: fixed;
+      pointer-events: none;
+      z-index: 0;
+      animation: particleFly linear infinite;
+      font-size: 1rem;
+      opacity: 0;
+    }
+
+    /* ===================== KEYFRAMES ===================== */
+    @keyframes fadeUp {
+      from { opacity:0; transform:translateY(22px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity:0; }
+      to   { opacity:1; }
+    }
+    @keyframes scaleIn {
+      from { opacity:0; transform:scale(0.7); }
+      to   { opacity:1; transform:scale(1); }
+    }
+    @keyframes floatY {
+      0%,100% { transform:translateY(0); }
+      50%      { transform:translateY(-14px); }
+    }
+    @keyframes flicker {
+      0%   { transform:scaleX(1) scaleY(1)   rotate(-2deg); opacity:1; }
+      100% { transform:scaleX(0.85) scaleY(1.1) rotate(2deg); opacity:0.85; }
+    }
+    @keyframes heartbeat {
+      0%,100% { transform:translate(-50%,-50%) scale(1); }
+      50%      { transform:translate(-50%,-50%) scale(1.2); }
+    }
+    @keyframes pulse {
+      0%,100% { opacity:0.35; }
+      50%      { opacity:0.7; }
+    }
+    @keyframes particleFly {
+      0%   { transform:translateY(110vh) rotate(0deg);   opacity:0; }
+      10%  { opacity:0.8; }
+      90%  { opacity:0.4; }
+      100% { transform:translateY(-10vh)  rotate(360deg); opacity:0; }
+    }
+
+    /* ===================== CONFETTI ===================== */
+    .confetti-piece {
+      position: fixed;
+      width: 8px;
+      height: 14px;
+      border-radius: 2px;
+      pointer-events: none;
+      z-index: 200;
+      animation: confettiFall linear forwards;
+      opacity: 0;
+    }
+
+    @keyframes confettiFall {
+      0%   { transform:translateY(-20px) rotate(0deg);   opacity:1; }
+      100% { transform:translateY(110vh) rotate(720deg); opacity:0; }
+    }
+
+    /* ===================== RESPONSIVE ===================== */
+    @media (max-width: 480px) {
+      .top-nav {
+        padding-top: 12px;
+      }
+
+      .top-nav-inner {
+        gap: 6px;
+        padding: 8px 10px;
+      }
+
+      .top-nav a {
+        font-size: 0.76rem;
+        padding: 7px 11px;
+      }
+
+      .cake-top  { width:110px; height:36px; }
+      .cake-mid  { width:126px; height:34px; }
+      .cake-bot  { width:144px; height:40px; }
+      .cake-plate{ width:160px; }
+      .candle-body { height:22px; }
+      .letter-wrap { padding: 0 4px; }
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="starCanvas"></canvas>
+
+<nav class="top-nav" aria-label="Main navigation">
+  <div class="top-nav-inner">
+    <a href="index.html">Нүүр</a>
+    <a href="flower.html">Flowers</a>
+    <a href="album.html">Албум</a>
+    <a href="thoughts.html">Note</a>
+    <a href="birthday.html" class="active">Birthday</a>
+  </div>
+</nav>
+
+<!-- SCENE 1: Envelope -->
+<div class="scene active" id="scene1">
+  <div class="envelope-wrap" id="envelopeWrap">
+    <div class="envelope" id="envelope">
+      <div class="env-left"></div>
+      <div class="env-right"></div>
+      <div class="env-heart">💌</div>
+    </div>
+    <span class="envelope-hint">дарж нээх</span>
+  </div>
+  <p class="intro-subtitle">Чамд зориулсан нэгэн тусгай зүйл байна...</p>
+</div>
+
+<!-- SCENE 2: Birthday Cake -->
+<div class="scene" id="scene2">
+  <p class="bday-eyebrow">✦ Төрсөн өдрийн мэнд ✦</p>
+
+  <div class="bday-name">
+    Оюун<em>дарь</em>
+  </div>
+
+  <div class="cake-wrap">
+    <div class="cake">
+      <div class="candles">
+        <div class="candle"><div class="flame"></div><div class="candle-body"></div></div>
+        <div class="candle"><div class="flame"></div><div class="candle-body"></div></div>
+        <div class="candle"><div class="flame"></div><div class="candle-body"></div></div>
+      </div>
+      <div class="cake-top"></div>
+      <div class="cake-mid"></div>
+      <div class="cake-bot"></div>
+      <div class="cake-plate"></div>
+    </div>
+  </div>
+
+  <p class="bday-wish">23 хүрч байгаа чамдаа төрсөн өдрийн мэнд<br/>🌸</p>
+
+  <div class="scene2-next">
+    <button class="btn-next" id="toScene3">Захидал унших →</button>
+  </div>
+</div>
+
+<!-- SCENE 3: Letter -->
+<div class="scene" id="scene3">
+  <div class="letter-wrap">
+    <p class="letter-from">Оюундарь-т</p>
+    <div class="letter-body">
+      <p>Оюундарь,</p>
+      <p>
+        Төрсөн өдрийн мэнд хүргэе.
+        Чиний төрсөн өдөр болохоор чамд зориулж хэдэн үг үлдээмээр санагдлаа.
+        Амьдралд зарим хүмүүс зүгээр нэг таарч өнгөрдөггүй,
+        <span class="highlight">учрах ёстой хүмүүс л учирдаг байх</span> гэж би хааяа боддог.
+        Чи миний амьдралд маш онцгой хүн болж үлдсэн.
+      </p>
+      <p>
+        Заримдаа цаг хугацааг буцааж болдог байсан бол
+        чамтайгаа дахин шинээр танилцаад,
+        бүхнийг илүү зөвөөр, илүү нандин эхлүүлэхсэн гэж бодогддог.
+        Чамтай байсан мөчүүдэд л би
+        <span class="gold">илүү жаргалтай, илүү утга учиртай</span>
+        амьдарч байснаа одоо илүү сайн ойлгож байгаа.
+      </p>
+      <p>
+        Миний энэ үгс яг одоо чамд утгагүй мэт санагдаж мэднэ.
+        Гэсэн ч энэ жил чамайг
+        <span class="highlight">аз жаргалтай, эрүүл саруул</span>,
+        нойр хоолоо сайн авч, өөрийгөө багахан ч гэсэн илүү их хайрлаж яваасай л гэж чин сэтгэлээсээ хүсэж байна.
+      </p>
+      <p>
+        Би ч гэсэн урдах амьдралдаа илүү сайн анхаарч,
+        урдах зүйлсээ хийн хэзээ нэг өдөр чам дээрээ илүү зөв хүн болж очих хэмжээнд хүртлээ өөрийгөө хөгжүүлнэ гэж бодож байгаа.
+      </p>
+      <p>
+        Тэр хүртэл чи минь биеэ бодоорой.
+        Ганцхан өнөөдөр биш, өдөр бүр
+        <span class="gold">жаргалтай, тайван</span>
+        яваасай гэж хүсэж байна.
+      </p>
+    </div>
+    <div class="letter-sign">
+      сайн сайхныг хүсье,
+      <strong>IronMan</strong>
+    </div>
+    <br/>
+    <button class="btn-next" id="toScene4" style="margin-top:10px">Үргэлжлүүлэх ✨</button>
+  </div>
+</div>
+
+<!-- SCENE 4: Finale -->
+<div class="scene" id="scene4">
+  <div class="finale-text">
+    Төрсөн өдрийн мэнд<br/><em>Оюундарь</em>
+  </div>
+  <div class="hearts-burst">🌸 ❤️ 🌸</div>
+  <p class="finale-sub">
+    23 нас чинь илүү амгалан, илүү гэрэлтэй,<br/>
+    олон сайхан мөчтэй байгаасай. 🎂
+  </p>
+</div>
+
+<!-- Progress dots -->
+<div class="progress" id="progress">
+  <div class="dot active"></div>
+  <div class="dot"></div>
+  <div class="dot"></div>
+  <div class="dot"></div>
+</div>
+
+<script>
+// ===================== STARS =====================
+const canvas = document.getElementById('starCanvas');
+const ctx = canvas.getContext('2d');
+let stars = [];
+let W, H;
+
+function resizeCanvas() {
+  W = canvas.width  = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
+
+function initStars() {
+  stars = [];
+  for (let i = 0; i < 200; i++) {
+    stars.push({
+      x: Math.random() * W,
+      y: Math.random() * H,
+      r: Math.random() * 1.4 + 0.3,
+      a: Math.random(),
+      speed: Math.random() * 0.003 + 0.001,
+      phase: Math.random() * Math.PI * 2
+    });
+  }
+}
+
+function drawStars(t) {
+  ctx.clearRect(0, 0, W, H);
+  for (const s of stars) {
+    const alpha = 0.2 + 0.6 * (0.5 + 0.5 * Math.sin(t * s.speed * 60 + s.phase));
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(255,240,245,${alpha})`;
+    ctx.fill();
+  }
+  requestAnimationFrame(drawStars);
+}
+
+window.addEventListener('resize', () => { resizeCanvas(); initStars(); });
+resizeCanvas();
+initStars();
+requestAnimationFrame(drawStars);
+
+// ===================== PARTICLES =====================
+const EMOJIS = ['🌸','✨','💕','🌷','⭐','💫','🌺','✿'];
+function spawnParticle() {
+  const el = document.createElement('div');
+  el.className = 'particle';
+  el.textContent = EMOJIS[Math.floor(Math.random() * EMOJIS.length)];
+  el.style.left  = Math.random() * 100 + 'vw';
+  el.style.bottom = '-30px';
+  const dur  = 8 + Math.random() * 12;
+  const delay= Math.random() * 8;
+  el.style.animationDuration  = dur + 's';
+  el.style.animationDelay     = delay + 's';
+  el.style.fontSize = (0.7 + Math.random() * 0.8) + 'rem';
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), (dur + delay) * 1000 + 500);
+}
+
+for (let i = 0; i < 22; i++) setTimeout(spawnParticle, Math.random() * 5000);
+setInterval(spawnParticle, 2200);
+
+// ===================== CONFETTI =====================
+const CONFETTI_COLORS = ['#e8728f','#f4b8c8','#f0c070','#a8d8ea','#fff','#ffd6e0','#c9f7e0'];
+function burst() {
+  for (let i = 0; i < 80; i++) {
+    const el = document.createElement('div');
+    el.className = 'confetti-piece';
+    el.style.left     = Math.random() * 100 + 'vw';
+    el.style.top      = '-20px';
+    el.style.background = CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)];
+    el.style.transform  = `rotate(${Math.random()*360}deg)`;
+    const dur = 2.5 + Math.random() * 2;
+    el.style.animationDuration = dur + 's';
+    el.style.animationDelay   = Math.random() * 0.8 + 's';
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), (dur + 1.2) * 1000);
+  }
+}
+
+// ===================== SCENES =====================
+let currentScene = 1;
+const dots = document.querySelectorAll('.dot');
+
+function goTo(n) {
+  document.getElementById(`scene${currentScene}`).classList.remove('active');
+  currentScene = n;
+  document.getElementById(`scene${n}`).classList.add('active');
+  dots.forEach((d, i) => d.classList.toggle('active', i === n - 1));
+
+  if (n === 2) burst();
+  if (n === 4) { burst(); setTimeout(burst, 800); }
+}
+
+// Envelope click
+document.getElementById('envelopeWrap').addEventListener('click', () => {
+  document.getElementById('envelope').classList.add('open');
+  setTimeout(() => goTo(2), 600);
+});
+
+document.getElementById('toScene3').addEventListener('click', () => goTo(3));
+document.getElementById('toScene4').addEventListener('click', () => goTo(4));
+
+// Keyboard navigation
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' && currentScene < 4) goTo(currentScene + 1);
+  if (e.key === 'ArrowLeft'  && currentScene > 1) goTo(currentScene - 1);
+});
+</script>
+</body>
+</html>
