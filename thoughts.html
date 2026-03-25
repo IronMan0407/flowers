@@ -6,59 +6,100 @@
     <title>Бидний бодол санаа 💭</title>
     <link rel="stylesheet" href="css/thoughts.css" />
     <link rel="icon" href="img/flowers.png" type="image/x-icon" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
   </head>
   <body>
+    <div class="bg">
+      <div class="bg-orb orb-one"></div>
+      <div class="bg-orb orb-two"></div>
+      <div class="bg-orb orb-three"></div>
+    </div>
+    <div class="grain"></div>
+
     <header>
-      <h1>Чиний хувийн блог 💭</h1>
-      <nav>
-        <a href="index.html">Нүүр</a>
-        <a href="flower.html">Flowers</a>
-        <a href="album.html">Албум</a>
-        <a href="thoughts.html" class="active">Note</a>
-      </nav>
+      <div class="header-inner">
+        <div class="header-title">
+          <span class="header-eyebrow">shared notes</span>
+          <h1>Бидний бодол санаа <span class="heart">💭</span></h1>
+        </div>
+        <nav>
+          <a href="index.html">Нүүр</a>
+          <a href="flower.html">Flowers</a>
+          <a href="album.html">Албум</a>
+          <a href="thoughts.html" class="active">Note</a>
+          <a href="birthday.html" class="birthday-link">🎂 Оюу</a>
+        </nav>
+      </div>
     </header>
 
     <main class="thoughts-container">
-      <!-- Add Thought Form -->
-      <section class="add-thought-section">
-        <h2>Блог бичих ✍️</h2>
-        <form id="thoughtForm">
-          <div class="form-group">
-            <label for="authorInput">Хэн бичиж байна:</label>
-            <select id="authorInput" name="author" required>
-              <option value="">Сонгох...</option>
-              <option value="IronMan">IronMan</option>
-              <option value="Оюундарь">Оюу</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="contentInput">Бодол санаа:</label>
-            <textarea
-              id="contentInput"
-              name="content"
-              rows="5"
-              placeholder="Өнөөдөр юу бодож байна вэ?..."
-              required
-            ></textarea>
-          </div>
-          <button type="submit" id="submitBtn" class="submit-btn">
-            <span>💌 Илгээх</span>
-          </button>
-        </form>
+      <section class="hero-panel">
+        <div class="hero-copy">
+          <span class="hero-kicker">private space</span>
+          <h2>Нэг нэгэндээ үлдээсэн жижиг тэмдэглэлүүд</h2>
+          <p>
+            Бодол, дурсамж, санасан зүйлсээ энд үлдээгээрэй. Зөөлөн, дулаахан,
+            бусад хуудсуудтай ижил уур амьсгалтай байхаар шинэчиллээ.
+          </p>
+        </div>
+        <div class="hero-badge">
+          <span>✍️</span>
+          <strong>5000 хүртэл тэмдэгт</strong>
+          <small>санаанд орсон бүхнээ бичиж болно</small>
+        </div>
       </section>
 
-      <!-- Display Thoughts -->
-      <section class="thoughts-list">
-        <h2>Бидний бичсэн зүйлс 📝</h2>
-        <div id="thoughtsContainer"></div>
-      </section>
+      <div class="thoughts-layout">
+        <section class="add-thought-section">
+          <div class="section-label">
+            <span>Шинэ note үлдээх</span>
+            <div class="label-line"></div>
+          </div>
+          <form id="thoughtForm" class="thought-form">
+            <div class="form-group">
+              <label for="authorInput">Хэн бичиж байна</label>
+              <select id="authorInput" name="author" required>
+                <option value="">Сонгох...</option>
+                <option value="IronMan">IronMan</option>
+                <option value="Оюундарь">Оюу</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="contentInput">Бодол санаа</label>
+              <textarea
+                id="contentInput"
+                name="content"
+                rows="7"
+                placeholder="Өнөөдөр юу бодож байна вэ?..."
+                required
+              ></textarea>
+            </div>
+            <button type="submit" id="submitBtn" class="submit-btn">
+              <span>💌 Илгээх</span>
+            </button>
+          </form>
+        </section>
+
+        <section class="thoughts-list">
+          <div class="section-label">
+            <span>Бидний бичсэн зүйлс</span>
+            <div class="label-line"></div>
+          </div>
+          <p class="section-intro">
+            Энд үлдсэн зурвас бүр жижигхэн дурсамж шиг харагдана.
+          </p>
+          <div id="thoughtsContainer" class="thoughts-feed"></div>
+        </section>
+      </div>
     </main>
 
     <footer>
       <p>Зөвхөн Оюундарь-т ❤️</p>
     </footer>
 
-    <!-- Module script -->
+    <button class="scroll-to-top" id="scrollTop" aria-label="Дээш очих">↑</button>
+
     <script type="module" src="js/thoughts.js"></script>
   </body>
 </html>
