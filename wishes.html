@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Хүсэлтийн шил 🌟</title>
+  <link rel="icon" href="img/flowers.png" type="image/x-icon" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/wishes.css" />
+</head>
+<body>
+
+  <!-- Ambient -->
+  <div class="bg">
+    <div class="bg-orb orb-one"></div>
+    <div class="bg-orb orb-two"></div>
+    <div class="bg-orb orb-three"></div>
+  </div>
+  <div class="grain"></div>
+
+  <!-- Wish spotlight overlay -->
+  <div class="wish-spotlight" id="wishSpotlight">
+    <div class="spotlight-card">
+      <span class="spotlight-deco">🌟</span>
+      <span class="spotlight-label">бидний хүсэл</span>
+      <p class="spotlight-wish-text" id="spotContent"></p>
+      <div class="spotlight-meta">
+        <span class="spot-author" id="spotAuthor"></span>
+        <span class="spot-sep">·</span>
+        <span class="spot-date" id="spotDate"></span>
+      </div>
+      <button class="close-spotlight" id="closeSpot">Хаах</button>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header>
+    <div class="header-inner">
+      <div class="header-title">
+        <span class="header-eyebrow">wish jar</span>
+        <h1>Хүслийн жагсаалт 🌟</h1>
+      </div>
+      <nav>
+        <a href="index.html">Нүүр</a>
+        <a href="flower.html">Цэцэг</a>
+        <a href="album.html">Албум</a>
+        <a href="thoughts.html">Notes</a>
+        <a href="letters.html">✉️ Захиа</a>
+        <a href="wishes.html" class="active">🌟 Хүсэл</a>
+        <a href="birthday.html" class="birthday-link">🎂 Оюу</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main -->
+  <main class="page-container">
+
+    <!-- Jar hero -->
+    <section class="jar-hero">
+      <div class="jar-hero-copy">
+        <span class="hero-eyebrow">wish jar</span>
+        <h2>Бидний хамтын мөрөөдлүүд</h2>
+        <p>
+          Хамт хийж, явж, хийхийг хүссэн бүх зүйлсийг энд бичээрэй.
+        </p>
+        <button class="reveal-btn" id="revealBtn" disabled>
+          <span>✨</span>
+          <span>Санамсаргүй хүсэл гаргах</span>
+          <div id="burstContainer"></div>
+        </button>
+      </div>
+
+      <!-- Jar illustration -->
+      <div class="jar-illustration">
+        <div class="jar-lid"></div>
+        <div class="jar-neck"></div>
+        <div class="jar-body">
+          <div class="jar-stars" id="jarStars"></div>
+        </div>
+        <div class="jar-count-badge">
+          <span>✦</span>
+          <span id="jarCount">0</span>
+          <span>хүсэл</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Two-column grid -->
+    <div class="content-grid">
+
+      <!-- Form -->
+      <aside class="form-panel">
+        <div class="panel-label">
+          <span>Хүсэл нэмэх</span>
+          <div class="label-line"></div>
+        </div>
+        <form id="wishForm" class="wish-form">
+          <div class="form-group">
+            <label for="authorInput">Хэн нэмж байна</label>
+            <select id="authorInput" required>
+              <option value="">Сонгох...</option>
+              <option value="IronMan">IronMan</option>
+              <option value="Оюундарь">Оюу</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="contentInput">Хийхийг хүссэн зүйлс</label>
+            <textarea
+              id="contentInput"
+              placeholder="Хамт хийхийг хүссэн зүйлээ бич... ✨"
+              required
+            ></textarea>
+          </div>
+          <button type="submit" id="submitBtn" class="submit-btn">
+            <span>🌟 Хүсэл нэмэх</span>
+          </button>
+        </form>
+      </aside>
+
+      <!-- Feed -->
+      <section class="feed-panel">
+        <div class="panel-label">
+          <span>Бидний хүслүүд</span>
+          <div class="label-line"></div>
+        </div>
+        <div id="wishesFeed" class="wishes-feed"></div>
+      </section>
+
+    </div>
+  </main>
+
+  <footer>
+    <p>Зөвхөн Оюундарь-т ❤️</p>
+  </footer>
+
+  <button class="scroll-to-top" id="scrollTop" aria-label="Дээш очих">↑</button>
+
+  <script type="module" src="js/wishes.js"></script>
+</body>
+</html>
