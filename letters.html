@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Хаалттай захиа ✉️</title>
+  <link rel="icon" href="img/flowers.png" type="image/x-icon" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/letters.css" />
+</head>
+<body>
+
+  <!-- Ambient background -->
+  <div class="bg">
+    <div class="bg-orb orb-one"></div>
+    <div class="bg-orb orb-two"></div>
+    <div class="bg-orb orb-three"></div>
+  </div>
+  <div class="grain"></div>
+
+  <!-- Header -->
+  <header>
+    <div class="header-inner">
+      <div class="header-title">
+        <span class="header-eyebrow">sealed letters</span>
+        <h1>Хаалттай захиа ✉️</h1>
+      </div>
+      <nav>
+        <a href="index.html">Нүүр</a>
+        <a href="flower.html">Цэцэг</a>
+        <a href="album.html">Албум</a>
+        <a href="thoughts.html">Notes</a>
+        <a href="letters.html" class="active">✉️ Захиа</a>
+        <a href="wishes.html">🌟 Хүсэл</a>
+        <a href="birthday.html" class="birthday-link">🎂 Оюу</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main -->
+  <main class="page-container">
+
+    <!-- Hero -->
+    <section class="page-hero">
+      <div class="hero-copy">
+        <span class="hero-eyebrow">love letters</span>
+        <h2>Нэг нэгэндээ бичсэн захиа</h2>
+        <p>
+          Огноо тогтоосон захиа нь тухайн өдрийг хүртэл хаалттай байна —
+          маш нууц, тухайн өдөр л нээгдэнэ.
+        </p>
+      </div>
+      <div class="hero-icon">✉️</div>
+    </section>
+
+    <!-- Two-column grid -->
+    <div class="content-grid">
+
+      <!-- Form -->
+      <aside class="form-panel">
+        <div class="panel-label">
+          <span>Захиа бичих</span>
+          <div class="label-line"></div>
+        </div>
+        <form id="letterForm" class="letter-form">
+
+          <div class="form-group">
+            <label for="authorInput">Хэн бичиж байна</label>
+            <select id="authorInput" required>
+              <option value="">Сонгох...</option>
+              <option value="IronMan">IronMan</option>
+              <option value="Оюундарь">Оюу</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="titleInput">Захиа гарчиг</label>
+            <input type="text" id="titleInput" placeholder="Хөөрхөн Оюу-с ч юм уу..." required />
+          </div>
+
+          <div class="form-group">
+            <label for="contentInput">Захиа агуулга</label>
+            <textarea
+              id="contentInput"
+              placeholder="Hi huurhnuu untaach..."
+              required
+            ></textarea>
+            <div id="charCounter" class="char-counter">8000 тэмдэгт үлдсэн</div>
+          </div>
+
+          <div class="form-group">
+            <label for="unlockDateInput">🔒 Нээгдэх огноо <span style="color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0">(заавал биш)</span></label>
+            <input type="date" id="unlockDateInput" />
+            <p class="form-hint">Огноо сонгоогүй бол захиа шууд харагдана.</p>
+          </div>
+
+          <button type="submit" id="submitBtn" class="submit-btn">
+            <span>✉️ Захиа илгээх</span>
+          </button>
+
+        </form>
+      </aside>
+
+      <!-- Feed -->
+      <section class="feed-panel">
+        <div class="panel-label">
+          <span>Бидний захианууд</span>
+          <div class="label-line"></div>
+        </div>
+        <div id="lettersFeed" class="letters-feed"></div>
+      </section>
+
+    </div>
+  </main>
+
+  <footer>
+    <p>Зөвхөн Оюундарь-т ❤️</p>
+  </footer>
+
+  <button class="scroll-to-top" id="scrollTop" aria-label="Дээш очих">↑</button>
+
+  <script type="module" src="js/letters.js"></script>
+</body>
+</html>
